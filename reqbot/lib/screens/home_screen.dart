@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reqbotui/screens/record.dart';
-import 'package:reqbotui/screens/upload_convert.dart';
+import 'package:reqbot/screens/record.dart';
+import 'package:reqbot/screens/upload_convert.dart';
 import 'project_name_input_screen.dart'; // Import the new screen
 
 class HomeScreen extends StatelessWidget {

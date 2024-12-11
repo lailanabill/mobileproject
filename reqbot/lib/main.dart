@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:reqbotui/screens/record.dart';
-import 'package:reqbotui/screens/sign_in_page.dart';
-import 'package:reqbotui/screens/sign_up_page.dart';
-import 'package:reqbotui/screens/upload_convert.dart';
-import 'package:reqbotui/screens/welcome_page.dart';
-import 'package:reqbotui/screens/home_screen.dart'; // Import the HomeScreen
+import 'package:reqbot/screens/record.dart';
+import 'package:reqbot/screens/sign_in_page.dart';
+import 'package:reqbot/screens/sign_up_page.dart';
+import 'package:reqbot/screens/upload_convert.dart';
+import 'package:reqbot/screens/welcome_page.dart';
+import 'package:reqbot/screens/home_screen.dart'; // Import the HomeScreen
 
 void main() {
   runApp(const ReqBotApp());
