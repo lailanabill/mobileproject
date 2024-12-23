@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:reqbot/screens/record.dart';
-import 'package:reqbot/screens/sign_in_page.dart';
-import 'package:reqbot/screens/sign_up_page.dart';
-import 'package:reqbot/screens/upload_convert.dart';
-import 'package:reqbot/screens/welcome_page.dart';
-import 'package:reqbot/screens/home_screen.dart'; // Import the HomeScreen
+import 'package:provider/provider.dart'; // For state management
+import 'package:reqbot/providers/favorites_provider.dart'; // Import FavoritesProvider
+import 'screens/record.dart';
+import 'screens/sign_in_page.dart';
+import 'screens/sign_up_page.dart';
+import 'screens/upload_convert.dart';
+import 'screens/welcome_page.dart';
+import 'screens/home_screen.dart';
+import 'screens/favorites_screen.dart'; // Import FavoritesScreen
 
 void main() {
-  runApp(const ReqBotApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => FavoritesProvider(), // Register FavoritesProvider
+        ),
+      ],
+      child: const ReqBotApp(),
+    ),
+  );
 }
 
 class ReqBotApp extends StatelessWidget {
@@ -27,8 +39,9 @@ class ReqBotApp extends StatelessWidget {
         '/': (context) => WelcomePage(),
         '/sign-in': (context) => SignInPage(),
         '/sign-up': (context) => SignUpPage(),
-        '/HomeScreen': (context) => HomeScreen(), // Add HomeScreen route
-        '/record': (context) => Record(), // Add HomeScreen route
+        '/HomeScreen': (context) => HomeScreen(),
+        '/record': (context) => Record(),
+        '/FavoritesScreen': (context) => FavoritesScreen(), // Add route for FavoritesScreen
       },
     );
   }
