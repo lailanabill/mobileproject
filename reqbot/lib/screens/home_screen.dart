@@ -53,14 +53,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Expanded(
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 1.5,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
+                    child: ListView.builder(
                       itemCount: 3, // Replace with your actual project count
                       itemBuilder: (context, index) {
                         final projectNames = [
