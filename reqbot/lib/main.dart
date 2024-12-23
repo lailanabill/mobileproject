@@ -19,3 +19,27 @@ void main() {
     ),
   );
 }
+
+class ReqBotApp extends StatelessWidget {
+  const ReqBotApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'ReqBot',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => WelcomePage(),
+        '/sign-in': (context) => SignInPage(),
+        '/sign-up': (context) => SignUpPage(),
+        '/HomeScreen': (context) => HomeScreen(),
+        '/record': (context) => Record(),
+      },
+    );
+  }
+}
