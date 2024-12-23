@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
                       ),
-                      itemCount: 3, // Replace with your actual project count
+                      itemCount: 3,
                       itemBuilder: (context, index) {
                         final projectNames = [
                           'Project X',
@@ -79,22 +79,6 @@ class HomeScreen extends StatelessWidget {
                           status: projectStatuses[index],
                         );
                       },
-                    ),
-                  ),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/FavoritesScreen');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 20),
-                      ),
-                      child: const Text(
-                        'View Favorites',
-                        style: TextStyle(color: Color(0xFF3F51B5)),
-                      ),
                     ),
                   ),
                 ],
