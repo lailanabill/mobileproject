@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reqbot/providers/favorites_provider.dart';
+import 'package:reqbot/screens/project_name_input_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -53,14 +54,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Expanded(
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 1.5,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
+                    child: ListView.builder(
                       itemCount: 3, // Replace with your actual project count
                       itemBuilder: (context, index) {
                         final projectNames = [
@@ -81,20 +75,76 @@ class HomeScreen extends StatelessWidget {
                       },
                     ),
                   ),
+
+                  // Notifications Section
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Notifications',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    flex: 1,
+                    child: ListView(
+                      children: const [
+                        NotificationButton(
+                            message: 'Feedback requested on Project x'),
+                        SizedBox(height: 10),
+                        NotificationButton(
+                            message: 'Validation issue detected in Project y'),
+                      ],
+                    ),
+                  ),
+
+                  // Bottom Section - Buttons
+                  const SizedBox(height: 16),
                   Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/FavoritesScreen');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 20),
-                      ),
-                      child: const Text(
-                        'View Favorites',
-                        style: TextStyle(color: Color(0xFF3F51B5)),
-                      ),
+                    child: Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // Navigate to the Project Name Input Screen
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ProjectNameInputScreen()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 20),
+                            textStyle: const TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFF3F51B5),
+                            ),
+                          ),
+                          child: const Text(
+                            'New Project',
+                            style: TextStyle(color: Color(0xFF3F51B5)),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/FavoritesScreen');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 20),
+                          ),
+                          child: const Text(
+                            'View Favorites',
+                            style: TextStyle(color: Color(0xFF3F51B5)),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -174,6 +224,56 @@ class AnimatedProjectCard extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class NotificationButton extends StatelessWidget {
+  final String message;
+
+  const NotificationButton({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$message tapped')),
+        );
+      },
+      splashColor: Colors.blue.withOpacity(0.2),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 8,
+              spreadRadius: 2,
+              offset: const Offset(2, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.notifications, color: Color(0xFF3F51B5)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

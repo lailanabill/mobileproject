@@ -115,9 +115,43 @@ class SignUpPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 15),
-                  // Password Field
+                  // Phone Field
                   FadeInUp(
                     duration: Duration(milliseconds: 2000),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: "Phone Number",
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.phone,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  // Company Field
+                  FadeInUp(
+                    duration: Duration(milliseconds: 2100),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: "Company",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  // Position Field
+                  FadeInUp(
+                    duration: Duration(milliseconds: 2200),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: "Position",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  // Password Field
+                  FadeInUp(
+                    duration: Duration(milliseconds: 2300),
                     child: TextField(
                       obscureText: true,
                       decoration: InputDecoration(
@@ -129,7 +163,7 @@ class SignUpPage extends StatelessWidget {
                   SizedBox(height: 10),
                   // Checkbox for Terms
                   FadeInUp(
-                    duration: Duration(milliseconds: 2100),
+                    duration: Duration(milliseconds: 2400),
                     child: Row(
                       children: [
                         Checkbox(value: true, onChanged: (value) {}),
@@ -155,7 +189,7 @@ class SignUpPage extends StatelessWidget {
                   SizedBox(height: 20),
                   // Sign Up Button
                   FadeInUp(
-                    duration: Duration(milliseconds: 2200),
+                    duration: Duration(milliseconds: 2500),
                     child: GestureDetector(
                       onTap: () {
                         // Implement sign-up functionality here
@@ -188,7 +222,7 @@ class SignUpPage extends StatelessWidget {
                   SizedBox(height: 30),
                   // Sign Up with Social Media
                   FadeInUp(
-                    duration: Duration(milliseconds: 2300),
+                    duration: Duration(milliseconds: 2600),
                     child: Column(
                       children: [
                         Text(
@@ -236,7 +270,7 @@ class SignUpPage extends StatelessWidget {
                   SizedBox(height: 20),
                   // Navigation to Sign In
                   FadeInUp(
-                    duration: Duration(milliseconds: 2400),
+                    duration: Duration(milliseconds: 2700),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/sign-in');
