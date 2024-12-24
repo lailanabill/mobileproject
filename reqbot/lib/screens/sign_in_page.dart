@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 
 class SignInPage extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,194 +97,216 @@ class SignInPage extends StatelessWidget {
               // Form Section
               Padding(
                 padding: EdgeInsets.all(30.0),
-                child: Column(
-                  children: <Widget>[
-                    // Email and Password Fields
-                    FadeInUp(
-                      duration: Duration(milliseconds: 1800),
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color.fromRGBO(143, 148, 251, 1),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromRGBO(143, 148, 251, .2),
-                              blurRadius: 20.0,
-                              offset: Offset(0, 10),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      // Email and Password Fields
+                      FadeInUp(
+                        duration: Duration(milliseconds: 1800),
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Color.fromRGBO(143, 148, 251, 1),
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Color.fromRGBO(143, 148, 251, 1),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.fromRGBO(143, 148, 251, .2),
+                                blurRadius: 20.0,
+                                offset: Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Color.fromRGBO(143, 148, 251, 1),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Email or Phone number",
-                                  hintStyle: TextStyle(color: Colors.grey[700]),
+                                child: TextFormField(
+                                  controller: _emailController,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Email or Phone number",
+                                    hintStyle: TextStyle(color: Colors.grey[700]),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Email or Phone number is required';
+                                    } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                                        .hasMatch(value)) {
+                                      return 'Enter a valid email';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextField(
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Password",
-                                  hintStyle: TextStyle(color: Colors.grey[700]),
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  controller: _passwordController,
+                                  obscureText: true,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Password",
+                                    hintStyle: TextStyle(color: Colors.grey[700]),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Password is required';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    
-                    // Forgot Password
-                    FadeInUp(
-                      duration: Duration(milliseconds: 2000),
-                      child: GestureDetector(
-                        onTap: () {
-                          // Handle "Forgot Password" functionality
-                        },
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            "Forgot Password?",
-                            style: TextStyle(
-                              color: Color.fromRGBO(143, 148, 251, 1),
-                              fontWeight: FontWeight.bold,
-                            ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20),
+                      SizedBox(height: 10),
 
-                    // Login Button
-                    FadeInUp(
-                      duration: Duration(milliseconds: 1900),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/HomeScreen');
-                        },
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: LinearGradient(
-                              colors: [
-                                Color.fromRGBO(143, 148, 251, 1),
-                                Color.fromRGBO(143, 148, 251, .6),
-                              ],
-                            ),
-                          ),
-                          child: Center(
+                      // Forgot Password
+                      FadeInUp(
+                        duration: Duration(milliseconds: 2000),
+                        child: GestureDetector(
+                          onTap: () {
+                            // Handle "Forgot Password" functionality
+                          },
+                          child: Align(
+                            alignment: Alignment.centerRight,
                             child: Text(
-                              "Login",
+                              "Forgot Password?",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Color.fromRGBO(143, 148, 251, 1),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 30),
+                      SizedBox(height: 20),
 
-                    // Social Media Login Options
-                    FadeInUp(
-                      duration: Duration(milliseconds: 2100),
-                      child: Column(
-                        children: [
-                          Text(
-                            "Sign in with",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
+                      // Login Button
+                      FadeInUp(
+                        duration: Duration(milliseconds: 1900),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              Navigator.pushNamed(context, '/HomeScreen');
+                            }
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color.fromRGBO(143, 148, 251, 1),
+                                  Color.fromRGBO(143, 148, 251, .6),
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.facebook,
-                                  color: Color(0xFF5D7CFB),
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.g_translate,
-                                  color: Colors.red,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.apple,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-
-                    // Navigation to Sign Up
-                    FadeInUp(
-                      duration: Duration(milliseconds: 2200),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/sign-up');
-                        },
-                        child: Text.rich(
-                          TextSpan(
-                            text: "Don't have an account? ",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "Sign up",
+                            child: Center(
+                              child: Text(
+                                "Login",
                                 style: TextStyle(
-                                  color: Color.fromRGBO(143, 148, 251, 1),
+                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 30),
-                  ],
+                      SizedBox(height: 30),
+
+                      // Social Media Login Options
+                      FadeInUp(
+                        duration: Duration(milliseconds: 2100),
+                        child: Column(
+                          children: [
+                            Text(
+                              "Sign in with",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.facebook,
+                                    color: Color(0xFF5D7CFB),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.g_translate,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.apple,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+
+                      // Navigation to Sign Up
+                      FadeInUp(
+                        duration: Duration(milliseconds: 2200),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/sign-up');
+                          },
+                          child: Text.rich(
+                            TextSpan(
+                              text: "Don't have an account? ",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: "Sign up",
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(143, 148, 251, 1),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 30),
+                    ],
+                  ),
                 ),
               )
             ],
