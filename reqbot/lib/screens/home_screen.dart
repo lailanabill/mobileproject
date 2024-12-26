@@ -41,10 +41,43 @@ class _HomeScreen extends State<HomeScreen> {
     }
   }
 
- 
-    // S
-    
+  void removeProject(int index) {
+    setState(() {
+      lastRemovedProject = projectNames[index];
+      lastRemovedStatus = projectStatuses[index];
+      lastRemovedIndex = index;
 
+      projectNames.removeAt(index);
+      projectStatuses.removeAt(index);
+    });
+
+    // Show SnackBar with Undo option
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$lastRemovedProject removed'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            // Restore the removed project
+            if (lastRemovedIndex != null &&
+                lastRemovedProject != null &&
+                lastRemovedStatus != null) {
+              setState(() {
+                projectNames.insert(lastRemovedIndex!, lastRemovedProject!);
+                projectStatuses.insert(lastRemovedIndex!, lastRemovedStatus!);
+              });
+
+              // Clear last removed details
+              lastRemovedProject = null;
+              lastRemovedStatus = null;
+              lastRemovedIndex = null;
+            }
+          },
+        ),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +141,7 @@ class _HomeScreen extends State<HomeScreen> {
                         return AnimatedProjectCard(
                           projectName: projectNames[index],
                           status: projectStatuses[index],
-                         
+                          onRemove: () => removeProject(index),
                         );
                       },
                     ),
