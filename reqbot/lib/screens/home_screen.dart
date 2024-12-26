@@ -192,3 +192,84 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 }
+
+class AnimatedProjectCard extends StatelessWidget {
+  final String projectName;
+  final String status;
+  final VoidCallback onRemove;
+
+  const AnimatedProjectCard({
+    required this.projectName,
+    required this.status,
+    required this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final favoritesProvider = Provider.of<FavoritesProvider>(context);
+    final isFavorite = favoritesProvider.isFavorite(projectName);
+
+    return TweenAnimationBuilder(
+      duration: const Duration(milliseconds: 500),
+      tween: Tween<double>(begin: 0.8, end: 1),
+      curve: Curves.easeOut,
+      builder: (context, double scale, child) {
+        return Transform.scale(
+          scale: scale,
+          child: InkWell(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('$projectName tapped')),
+              );
+            },
+            child: Dismissible(
+              key: ValueKey(projectName),
+              background: Container(color: Colors.red),
+              onDismissed: (_) => onRemove(),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ListTile(
+                  title: Text(projectName),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        status == 'completed'
+                            ? Icons.check_circle
+                            : status == 'attention_needed'
+                                ? Icons.error
+                                : Icons.access_time,
+                        color: status == 'completed'
+                            ? Colors.green
+                            : status == 'attention_needed'
+                                ? Colors.red
+                                : Colors.orange,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: () {
+                          favoritesProvider.toggleFavorite(projectName);
+                          final snackBarMessage = isFavorite
+                              ? '$projectName removed from favorites'
+                              : '$projectName added to favorites';
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(snackBarMessage)),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
