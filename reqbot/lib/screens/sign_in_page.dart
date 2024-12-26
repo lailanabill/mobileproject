@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:reqbot/controllers/signin_controller.dart';
 
-
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
 
@@ -19,47 +18,56 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            _buildHeader(),
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    _buildTextField(
-                      controller: controller.emailController,
-                      hintText: "Email or Phone number",
-                      validator: controller.validateEmail,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // For small screens, increase padding and margins
+          double padding = constraints.maxWidth < 600 ? 15.0 : 30.0;
+          double textSize = constraints.maxWidth < 600 ? 18.0 : 20.0;
+          double logoSize = constraints.maxWidth < 600 ? 60.0 : 100.0;
+
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _buildHeader(logoSize),
+                Padding(
+                  padding: EdgeInsets.all(padding),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        _buildTextField(
+                          controller: controller.emailController,
+                          hintText: "Email or Phone number",
+                          validator: controller.validateEmail,
+                        ),
+                        SizedBox(height: 15),
+                        _buildTextField(
+                          controller: controller.passwordController,
+                          hintText: "Password",
+                          obscureText: true,
+                          validator: controller.validatePassword,
+                        ),
+                        SizedBox(height: 15),
+                        _buildForgotPassword(),
+                        SizedBox(height: 20),
+                        _buildLoginButton(context, textSize),
+                        SizedBox(height: 30),
+                        _buildSocialLoginOptions(),
+                        SizedBox(height: 20),
+                        _buildSignUpOption(context),
+                      ],
                     ),
-                    SizedBox(height: 15),
-                    _buildTextField(
-                      controller: controller.passwordController,
-                      hintText: "Password",
-                      obscureText: true,
-                      validator: controller.validatePassword,
-                    ),
-                    SizedBox(height: 15),
-                    _buildForgotPassword(),
-                    SizedBox(height: 20),
-                    _buildLoginButton(context),
-                    SizedBox(height: 30),
-                    _buildSocialLoginOptions(),
-                    SizedBox(height: 20),
-                    _buildSignUpOption(context),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(double logoSize) {
     return Container(
       height: 400,
       decoration: BoxDecoration(
@@ -72,7 +80,7 @@ class _SignInPageState extends State<SignInPage> {
         children: <Widget>[
           Positioned(
             left: 30,
-            width: 80,
+            width: logoSize,
             height: 200,
             child: FadeInUp(
               duration: Duration(seconds: 1),
@@ -87,7 +95,7 @@ class _SignInPageState extends State<SignInPage> {
           ),
           Positioned(
             left: 140,
-            width: 80,
+            width: logoSize,
             height: 150,
             child: FadeInUp(
               duration: Duration(milliseconds: 1200),
@@ -103,7 +111,7 @@ class _SignInPageState extends State<SignInPage> {
           Positioned(
             right: 40,
             top: 40,
-            width: 80,
+            width: logoSize,
             height: 150,
             child: FadeInUp(
               duration: Duration(milliseconds: 1300),
@@ -175,7 +183,7 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  Widget _buildLoginButton(BuildContext context) {
+  Widget _buildLoginButton(BuildContext context, double textSize) {
     return GestureDetector(
       onTap: () {
         if (_formKey.currentState?.validate() ?? false) {
@@ -199,6 +207,7 @@ class _SignInPageState extends State<SignInPage> {
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontSize: textSize, // Responsive text size
             ),
           ),
         ),
