@@ -96,6 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: ListTile(
                                     title: Text(projectName),
                                     subtitle: Text(projectStatus),
+                                    onTap: () {
+                                      // You can add functionality for when a project is tapped
+                                    },
                                   ),
                                 ),
                                 secondaryActions: [
