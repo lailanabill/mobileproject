@@ -18,151 +18,162 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    // Name Field
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 1800),
-                      child: _buildTextField(
-                        controller: controller.nameController,
-                        labelText: "Full Name",
-                        validator: controller.validateName,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            double screenWidth = constraints.maxWidth;
+            double headerHeight = screenWidth > 600
+                ? 400
+                : 300; // Adjust header size based on screen width
 
-                    // Email Field
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 1900),
-                      child: _buildTextField(
-                        controller: controller.emailController,
-                        labelText: "Email",
-                        validator: controller.validateEmail,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
+            return Column(
+              children: [
+                _buildHeader(headerHeight),
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Name Field
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 1800),
+                          child: _buildTextField(
+                            controller: controller.nameController,
+                            labelText: "Full Name",
+                            validator: controller.validateName,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
 
-                    // Phone Field
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 2000),
-                      child: _buildTextField(
-                        controller: controller.phoneController,
-                        labelText: "Phone Number",
-                        validator: controller.validatePhone,
-                        keyboardType: TextInputType.phone,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
+                        // Email Field
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 1900),
+                          child: _buildTextField(
+                            controller: controller.emailController,
+                            labelText: "Email",
+                            validator: controller.validateEmail,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
 
-                    // Company Field
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 2100),
-                      child: _buildTextField(
-                        controller: controller.companyController,
-                        labelText: "Company",
-                      ),
-                    ),
-                    const SizedBox(height: 15),
+                        // Phone Field
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 2000),
+                          child: _buildTextField(
+                            controller: controller.phoneController,
+                            labelText: "Phone Number",
+                            validator: controller.validatePhone,
+                            keyboardType: TextInputType.phone,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
 
-                    // Position Field
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 2200),
-                      child: _buildTextField(
-                        controller: controller.positionController,
-                        labelText: "Position",
-                      ),
-                    ),
-                    const SizedBox(height: 15),
+                        // Company Field
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 2100),
+                          child: _buildTextField(
+                            controller: controller.companyController,
+                            labelText: "Company",
+                          ),
+                        ),
+                        const SizedBox(height: 15),
 
-                    // Password Field
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 2300),
-                      child: _buildTextField(
-                        controller: controller.passwordController,
-                        labelText: "Password",
-                        obscureText: true,
-                        validator: controller.validatePassword,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
+                        // Position Field
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 2200),
+                          child: _buildTextField(
+                            controller: controller.positionController,
+                            labelText: "Position",
+                          ),
+                        ),
+                        const SizedBox(height: 15),
 
-                    // Terms and Conditions
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 2400),
-                      child: ValueListenableBuilder<bool>(
-                        valueListenable: controller.isTermsAccepted,
-                        builder: (context, value, child) {
-                          return Row(
-                            children: [
-                              Checkbox(
-                                value: value,
-                                onChanged: (newValue) {
-                                  controller.isTermsAccepted.value = newValue ?? false;
-                                },
-                              ),
-                              Expanded(
-                                child: Text.rich(
-                                  TextSpan(
-                                    text: "I agree to the processing of ",
-                                    children: [
-                                      TextSpan(
-                                        text: "Personal data",
-                                        style: TextStyle(
-                                          color: const Color.fromRGBO(143, 148, 251, 1),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
+                        // Password Field
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 2300),
+                          child: _buildTextField(
+                            controller: controller.passwordController,
+                            labelText: "Password",
+                            obscureText: true,
+                            validator: controller.validatePassword,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Terms and Conditions
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 2400),
+                          child: ValueListenableBuilder<bool>(
+                            valueListenable: controller.isTermsAccepted,
+                            builder: (context, value, child) {
+                              return Row(
+                                children: [
+                                  Checkbox(
+                                    value: value,
+                                    onChanged: (newValue) {
+                                      controller.isTermsAccepted.value =
+                                          newValue ?? false;
+                                    },
                                   ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 20),
+                                  Expanded(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        text: "I agree to the processing of ",
+                                        children: [
+                                          TextSpan(
+                                            text: "Personal data",
+                                            style: TextStyle(
+                                              color: const Color.fromRGBO(
+                                                  143, 148, 251, 1),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 20),
 
-                    // Sign Up Button
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 2500),
-                      child: _buildSignUpButton(),
-                    ),
-                    const SizedBox(height: 30),
+                        // Sign Up Button
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 2500),
+                          child: _buildSignUpButton(),
+                        ),
+                        const SizedBox(height: 30),
 
-                    // Social Media Sign Up
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 2600),
-                      child: _buildSocialSignUpOptions(),
-                    ),
-                    const SizedBox(height: 20),
+                        // Social Media Sign Up
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 2600),
+                          child: _buildSocialSignUpOptions(),
+                        ),
+                        const SizedBox(height: 20),
 
-                    // Navigation to Sign In
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 2700),
-                      child: _buildSignInOption(),
+                        // Navigation to Sign In
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 2700),
+                          child: _buildSignInOption(),
+                        ),
+                        const SizedBox(height: 30),
+                      ],
                     ),
-                    const SizedBox(height: 30),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(double height) {
     return Container(
-      height: 400,
+      height: height,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/background.png'),
