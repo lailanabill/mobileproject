@@ -273,3 +273,53 @@ class AnimatedProjectCard extends StatelessWidget {
     );
   }
 }
+
+class NotificationButton extends StatelessWidget {
+  final String message;
+
+  const NotificationButton({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$message tapped')),
+        );
+      },
+      splashColor: Colors.blue.withOpacity(0.2),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 8,
+              spreadRadius: 2,
+              offset: const Offset(2, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.notifications, color: Color(0xFF3F51B5)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
