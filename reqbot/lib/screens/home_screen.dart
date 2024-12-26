@@ -92,17 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                             ),
                           ),
-                          child: Card(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 8.0),
-                            child: ListTile(
-                              title: Text(projectName),
-                              subtitle: Text(projectStatus),
-                              onTap: () {
-                                // You can add functionality for when a project is tapped
-                              },
-                            ),
-                          ),
+                          // Define actions
                           secondary: [
                             IconSlideAction(
                               caption: 'Delete',
