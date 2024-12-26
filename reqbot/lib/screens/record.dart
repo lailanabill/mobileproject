@@ -88,62 +88,91 @@ class _RecordState extends State<Record> {
             ),
             const SizedBox(height: 16),
 
-            // Live Speech-to-Text Button
-            Center(
-              child: ElevatedButton.icon(
-                icon: Icon(_isListening ? Icons.mic_off : Icons.mic),
-                label:
-                    Text(_isListening ? 'Stop Listening' : 'Start Listening'),
-                onPressed: _isListening ? _stopListening : _startListening,
-                style: ElevatedButton.styleFrom(
-                  iconColor: _isListening ? Colors.red : Colors.blueAccent,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            // Animated Live Speech-to-Text Button
+            TweenAnimationBuilder(
+              duration: const Duration(milliseconds: 800),
+              tween: Tween<double>(begin: 0, end: 1),
+              builder: (context, double scale, child) {
+                return Transform.scale(
+                  scale: scale,
+                  child: child,
+                );
+              },
+              child: Center(
+                child: ElevatedButton.icon(
+                  icon: Icon(_isListening ? Icons.mic_off : Icons.mic),
+                  label: Text(_isListening ? 'Stop Listening' : 'Start Listening'),
+                  onPressed: _isListening ? _stopListening : _startListening,
+                  style: ElevatedButton.styleFrom(
+                    iconColor: _isListening ? Colors.red : Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  ),
                 ),
               ),
             ),
 
             const SizedBox(height: 16),
 
-            // Display Live Transcription
+            // Animated Transcription Display
             if (_isListening || _transcription.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.only(top: 8),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _transcription.isEmpty
-                      ? 'Listening... Speak now.'
-                      : 'Transcription: $_transcription',
-                  style: const TextStyle(fontSize: 16),
+              TweenAnimationBuilder(
+                duration: const Duration(milliseconds: 700),
+                tween: Tween<double>(begin: 0, end: 1),
+                builder: (context, double opacity, child) {
+                  return Opacity(
+                    opacity: opacity,
+                    child: child,
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _transcription.isEmpty
+                        ? 'Listening... Speak now.'
+                        : 'Transcription: $_transcription',
+                    style: const TextStyle(fontSize: 16),
+                  ),
                 ),
               ),
 
             const SizedBox(height: 24),
 
-            // Uploaded Files Section
+            // Animated Uploaded Files Section
             const Text(
               'Uploaded Files',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
-            // Display List of Uploaded/Transcribed Files
+            // Display List of Uploaded/Transcribed Files with Animation
             Expanded(
-              child: ListView.builder(
-                itemCount: uploadedFiles.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(uploadedFiles[index]),
-                    trailing:
-                        const Icon(Icons.check_circle, color: Colors.green),
+              child: TweenAnimationBuilder(
+                duration: const Duration(milliseconds: 800),
+                tween: Tween<double>(begin: 0, end: 1),
+                builder: (context, double opacity, child) {
+                  return Opacity(
+                    opacity: opacity,
+                    child: child,
                   );
                 },
+                child: ListView.builder(
+                  itemCount: uploadedFiles.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(uploadedFiles[index]),
+                      trailing: const Icon(Icons.check_circle, color: Colors.green),
+                    );
+                  },
+                ),
               ),
             ),
+
+            // Animated Navigation Buttons
             TweenAnimationBuilder(
               duration: const Duration(milliseconds: 800),
               tween: Tween<Offset>(
@@ -162,8 +191,7 @@ class _RecordState extends State<Record> {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       backgroundColor: Colors.blueAccent,
                     ),
                     child: const Text(
@@ -176,13 +204,12 @@ class _RecordState extends State<Record> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const StructuredRequirementsScreen()),
+                          builder: (context) => const StructuredRequirementsScreen(),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       backgroundColor: Colors.blueAccent,
                     ),
                     child: const Text(
