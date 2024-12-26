@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:reqbot/providers/favorites_provider.dart';
-import 'package:reqbot/screens/project_name_input_screen.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import '../database/database_helper.dart'; // Import the database helper
+import 'package:reqbot/screens/project_name_input_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -79,15 +78,37 @@ class _HomeScreenState extends State<HomeScreen> {
                         final projectStatus = _projects[index]['status'];
                         final projectId = _projects[index]['id'];
 
-                        return Card(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
-                          child: ListTile(
-                            title: Text(projectName),
-                            subtitle: Text(projectStatus),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
+                        return Slidable(
+                          actionPane: SlidableDrawerActionPane(),
+                          actionExtentRatio: 0.25,
+                          child: Card(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                            child: ListTile(
+                              title: Text(projectName),
+                              subtitle: Text(projectStatus),
+                              onTap: () {
+                                // You can add functionality for when a project is tapped
+                              },
+                            ),
+                          ),
+                          child: Card(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                            child: ListTile(
+                              title: Text(projectName),
+                              subtitle: Text(projectStatus),
+                              onTap: () {
+                                // You can add functionality for when a project is tapped
+                              },
+                            ),
+                          ),
+                          secondary: [
+                            IconSlideAction(
+                              caption: 'Delete',
+                              color: Colors.red,
+                              icon: Icons.delete,
+                              onTap: () {
                                 _deleteProject(projectId);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -95,10 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               },
                             ),
-                            onTap: () {
-                              // You can add functionality for when a project is tapped
-                            },
-                          ),
+                          ],
                         );
                       },
                     ),
