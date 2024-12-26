@@ -21,10 +21,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadProjects() async {
-    final projects = await _dbHelper.getProjects();
-    setState(() {
-      _projects = projects;
-    });
+    try {
+      final projects = await _dbHelper.getProjects() ?? [];
+      setState(() {
+        _projects = projects;
+      });
+    } catch (e) {
+      // Handle error (e.g., show an alert or log)
+      print('Error loading projects: $e');
+    }
   }
 
   Future<void> _deleteProject(int id) async {
@@ -71,53 +76,55 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: _projects.length,
-                      itemBuilder: (context, index) {
-                        final projectName = _projects[index]['name'];
-                        final projectStatus = _projects[index]['status'];
-                        final projectId = _projects[index]['id'];
+                    child: _projects.isEmpty
+                        ? Center(
+                            child: Text('No projects available',
+                                style: TextStyle(color: Colors.white)))
+                        : ListView.builder(
+                            itemCount: _projects.length,
+                            itemBuilder: (context, index) {
+                              final projectName = _projects[index]['name'];
+                              final projectStatus = _projects[index]['status'];
+                              final projectId = _projects[index]['id'];
 
-                        return Slidable(
-                          actionPane: SlidableDrawerActionPane(),
-                          actionExtentRatio: 0.25,
-                          child: Card(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 8.0),
-                            child: ListTile(
-                              title: Text(projectName),
-                              subtitle: Text(projectStatus),
-                              onTap: () {
-                                // You can add functionality for when a project is tapped
-                              },
-                            ),
+                              return Slidable(
+                                actionPane: SlidableDrawerActionPane(),
+                                actionExtentRatio: 0.25,
+                                child: Card(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 8.0),
+                                  child: ListTile(
+                                    title: Text(projectName),
+                                    subtitle: Text(projectStatus),
+                                  ),
+                                ),
+                                secondaryActions: [
+                                  IconSlideAction(
+                                    caption: 'Delete',
+                                    color: Colors.red,
+                                    icon: Icons.delete,
+                                    onTap: () {
+                                      _deleteProject(projectId);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content:
+                                                Text('$projectName deleted')),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           ),
-                          // Define actions
-                          secondary: [
-                            IconSlideAction(
-                              caption: 'Delete',
-                              color: Colors.red,
-                              icon: Icons.delete,
-                              onTap: () {
-                                _deleteProject(projectId);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text('$projectName deleted')),
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    ),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const ProjectNameInputScreen()),
+                          builder: (context) => const ProjectNameInputScreen(),
+                        ),
                       ).then((_) => _loadProjects()); // Refresh projects
                     },
                     style: ElevatedButton.styleFrom(
