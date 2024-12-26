@@ -21,6 +21,10 @@ class _HomeScreen extends State<HomeScreen> {
     'in_progress'
   ];
 
+  String? lastRemovedProject;
+  String? lastRemovedStatus;
+  int? lastRemovedIndex;
+
   void logout() async {
     try {
       await authServices.signOut();
@@ -37,13 +41,10 @@ class _HomeScreen extends State<HomeScreen> {
     }
   }
 
-  // Remove a project from the list
-  void removeProject(int index) {
-    setState(() {
-      projectNames.removeAt(index);
-      projectStatuses.removeAt(index);
-    });
-  }
+ 
+    // S
+    
+
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +108,7 @@ class _HomeScreen extends State<HomeScreen> {
                         return AnimatedProjectCard(
                           projectName: projectNames[index],
                           status: projectStatuses[index],
-                          onRemove: () => removeProject(index),
+                         
                         );
                       },
                     ),
@@ -216,54 +217,47 @@ class AnimatedProjectCard extends StatelessWidget {
       builder: (context, double scale, child) {
         return Transform.scale(
           scale: scale,
-          child: InkWell(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$projectName tapped')),
-              );
-            },
-            child: Dismissible(
-              key: ValueKey(projectName),
-              background: Container(color: Colors.red),
-              onDismissed: (_) => onRemove(),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ListTile(
-                  title: Text(projectName),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        status == 'completed'
-                            ? Icons.check_circle
-                            : status == 'attention_needed'
-                                ? Icons.error
-                                : Icons.access_time,
-                        color: status == 'completed'
-                            ? Colors.green
-                            : status == 'attention_needed'
-                                ? Colors.red
-                                : Colors.orange,
+          child: Dismissible(
+            key: ValueKey(projectName),
+            background: Container(color: Colors.red),
+            onDismissed: (_) => onRemove(),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ListTile(
+                title: Text(projectName),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      status == 'completed'
+                          ? Icons.check_circle
+                          : status == 'attention_needed'
+                              ? Icons.error
+                              : Icons.access_time,
+                      color: status == 'completed'
+                          ? Colors.green
+                          : status == 'attention_needed'
+                              ? Colors.red
+                              : Colors.orange,
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavorite ? Colors.red : Colors.grey,
                       ),
-                      IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : Colors.grey,
-                        ),
-                        onPressed: () {
-                          favoritesProvider.toggleFavorite(projectName);
-                          final snackBarMessage = isFavorite
-                              ? '$projectName removed from favorites'
-                              : '$projectName added to favorites';
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(snackBarMessage)),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                      onPressed: () {
+                        favoritesProvider.toggleFavorite(projectName);
+                        final snackBarMessage = isFavorite
+                            ? '$projectName removed from favorites'
+                            : '$projectName added to favorites';
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(snackBarMessage)),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
