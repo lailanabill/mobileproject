@@ -70,185 +70,197 @@ class _UploadConvertScreenState extends State<UploadConvertScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title
-                TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 700),
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, double opacity, child) {
-                    return Opacity(opacity: opacity, child: child);
-                  },
-                  child: const Text(
-                    'Upload Options',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Check available width for layout decisions
+              double maxWidth = constraints.maxWidth;
 
-                // Upload Buttons
-                TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 600),
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, double scale, child) {
-                    return Transform.scale(scale: scale, child: child);
-                  },
-                  child: UploadButton(
-                    label: 'Upload Audio',
-                    icon: Icons.mic,
-                    onPressed: () => pickFile('audio'),
-                    color: Colors.blueAccent,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 600),
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, double scale, child) {
-                    return Transform.scale(scale: scale, child: child);
-                  },
-                  child: UploadButton(
-                    label: 'Upload Text',
-                    icon: Icons.text_fields,
-                    onPressed: () => pickFile('text'),
-                    color: Colors.blueAccent,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 600),
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, double scale, child) {
-                    return Transform.scale(scale: scale, child: child);
-                  },
-                  child: UploadButton(
-                    label: 'Start Recording',
-                    icon: Icons.text_fields,
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Record()),
-                    ),
-                    color: Colors.blueAccent,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Uploaded Files Section
-                TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 800),
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, double opacity, child) {
-                    return Opacity(opacity: opacity, child: child);
-                  },
-                  child: const Text(
-                    'Uploaded Files',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // File List with Animated Items
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: uploadedFiles.length,
-                    itemBuilder: (context, index) {
-                      return TweenAnimationBuilder(
-                        duration: const Duration(milliseconds: 500),
-                        tween: Tween<double>(begin: 0, end: 1),
-                        curve: Curves.easeOut,
-                        builder: (context, double scale, child) {
-                          return Transform.scale(scale: scale, child: child);
-                        },
-                        child: ListTile(
-                          title: Text(uploadedFiles[index]),
-                          trailing: const Icon(Icons.check_circle,
-                              color: Colors.green),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Navigation Buttons with Animation
-                TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 800),
-                  tween: Tween<Offset>(
-                    begin: const Offset(0, 0.5),
-                    end: const Offset(0, 0),
-                  ),
-                  curve: Curves.easeOut,
-                  builder: (context, Offset offset, child) {
-                    return Transform.translate(offset: offset, child: child);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 16),
-                          backgroundColor: Colors.blueAccent,
-                        ),
-                        child: const Text(
-                          'Back',
-                          style: TextStyle(color: Colors.white), // White text
-                        ),
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    TweenAnimationBuilder(
+                      duration: const Duration(milliseconds: 700),
+                      tween: Tween<double>(begin: 0, end: 1),
+                      builder: (context, double opacity, child) {
+                        return Opacity(opacity: opacity, child: child);
+                      },
+                      child: const Text(
+                        'Upload Options',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (uploadedFiles.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Please upload at least one file.')),
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const StructuredRequirementsScreen()),
-                            );
-                          }
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Upload Buttons
+                    TweenAnimationBuilder(
+                      duration: const Duration(milliseconds: 600),
+                      tween: Tween<double>(begin: 0, end: 1),
+                      builder: (context, double scale, child) {
+                        return Transform.scale(scale: scale, child: child);
+                      },
+                      child: UploadButton(
+                        label: 'Upload Audio',
+                        icon: Icons.mic,
+                        onPressed: () => pickFile('audio'),
+                        color: Colors.blueAccent,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    TweenAnimationBuilder(
+                      duration: const Duration(milliseconds: 600),
+                      tween: Tween<double>(begin: 0, end: 1),
+                      builder: (context, double scale, child) {
+                        return Transform.scale(scale: scale, child: child);
+                      },
+                      child: UploadButton(
+                        label: 'Upload Text',
+                        icon: Icons.text_fields,
+                        onPressed: () => pickFile('text'),
+                        color: Colors.blueAccent,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    TweenAnimationBuilder(
+                      duration: const Duration(milliseconds: 600),
+                      tween: Tween<double>(begin: 0, end: 1),
+                      builder: (context, double scale, child) {
+                        return Transform.scale(scale: scale, child: child);
+                      },
+                      child: UploadButton(
+                        label: 'Start Recording',
+                        icon: Icons.text_fields,
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Record()),
+                        ),
+                        color: Colors.blueAccent,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Uploaded Files Section
+                    TweenAnimationBuilder(
+                      duration: const Duration(milliseconds: 800),
+                      tween: Tween<double>(begin: 0, end: 1),
+                      builder: (context, double opacity, child) {
+                        return Opacity(opacity: opacity, child: child);
+                      },
+                      child: const Text(
+                        'Uploaded Files',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // File List with Animated Items
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: uploadedFiles.length,
+                        itemBuilder: (context, index) {
+                          return TweenAnimationBuilder(
+                            duration: const Duration(milliseconds: 500),
+                            tween: Tween<double>(begin: 0, end: 1),
+                            curve: Curves.easeOut,
+                            builder: (context, double scale, child) {
+                              return Transform.scale(
+                                  scale: scale, child: child);
+                            },
+                            child: ListTile(
+                              title: Text(uploadedFiles[index]),
+                              trailing: const Icon(Icons.check_circle,
+                                  color: Colors.green),
+                            ),
+                          );
                         },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 16),
-                          backgroundColor: Colors.blueAccent,
-                        ),
-                        child: const Text(
-                          'Next',
-                          style: TextStyle(color: Colors.white), // White text
-                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Navigation Buttons with Animation
+                    TweenAnimationBuilder(
+                      duration: const Duration(milliseconds: 800),
+                      tween: Tween<Offset>(
+                          begin: const Offset(0, 0.5), end: const Offset(0, 0)),
+                      curve: Curves.easeOut,
+                      builder: (context, Offset offset, child) {
+                        return Transform.translate(
+                            offset: offset, child: child);
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 16),
+                              backgroundColor: Colors.blueAccent,
+                            ),
+                            child: const Text(
+                              'Back',
+                              style:
+                                  TextStyle(color: Colors.white), // White text
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (uploadedFiles.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Please upload at least one file.')),
+                                );
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const StructuredRequirementsScreen()),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 16),
+                              backgroundColor: Colors.blueAccent,
+                            ),
+                            child: const Text(
+                              'Next',
+                              style:
+                                  TextStyle(color: Colors.white), // White text
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Error Message
+                    if (errorMessage.isNotEmpty) ...[
+                      Text(
+                        errorMessage,
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ],
-                  ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Tip: You can upload multiple files for batch processing. All transcripts will be editable.',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-
-                // Error Message
-                if (errorMessage.isNotEmpty) ...[
-                  Text(
-                    errorMessage,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ],
-                const SizedBox(height: 8),
-                const Text(
-                  'Tip: You can upload multiple files for batch processing. All transcripts will be editable.',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ],
       ),
