@@ -1,50 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:reqbot/auth/auth_services.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:reqbot/controllers/signup_controller.dart';
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+  const SignUpPage({Key? key}) : super(key: key);
+
   @override
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage>{
-
-  final authServices = AuthServices();
-
-
-
+class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _companyController = TextEditingController();
-  final TextEditingController _positionController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  void signUp() async {
-  final email = _emailController.text;
-  final password = _passwordController.text;
-  final phone = _phoneController.text;
-  final company = _companyController.text;
-  final position = _positionController.text;
-  final name = _nameController.text;
-
-  try {
-    final response = await authServices.signUpWithEmailPassword(name, email, phone, password, company, position);
-    if (response.user != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Sign-up successful! Please verify your email.")),
-      );
-      Navigator.pushNamed(context, '/sign-in');
-    }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error during sign-up: $e")),
-    );
-  }
-}
+  final SignUpController controller = SignUpController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,334 +20,340 @@ class _SignUpPageState extends State<SignUpPage>{
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Animated Header Section
-            Container(
-              height: 400,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/background.png'),
-                  fit: BoxFit.fill,
-                ),
-              ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    left: 30,
-                    width: 80,
-                    height: 200,
-                    child: FadeInUp(
-                      duration: Duration(seconds: 1),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/light-1.png'),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 140,
-                    width: 80,
-                    height: 150,
-                    child: FadeInUp(
-                      duration: Duration(milliseconds: 1200),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/light-2.png'),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 40,
-                    top: 40,
-                    width: 80,
-                    height: 150,
-                    child: FadeInUp(
-                      duration: Duration(milliseconds: 1300),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/clock.png'),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    child: FadeInUp(
-                      duration: Duration(milliseconds: 1600),
-                      child: Container(
-                        margin: EdgeInsets.only(top: 50),
-                        child: Center(
-                          child: Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-
-            // Form Section
+            _buildHeader(),
             Padding(
-              padding: EdgeInsets.all(30.0),
+              padding: const EdgeInsets.all(30.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    // Full Name Field
+                    // Name Field
                     FadeInUp(
-                      duration: Duration(milliseconds: 1800),
-                      child: TextFormField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          labelText: "Full Name",
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Full Name is required';
-                          }
-                          return null;
-                        },
+                      duration: const Duration(milliseconds: 1800),
+                      child: _buildTextField(
+                        controller: controller.nameController,
+                        labelText: "Full Name",
+                        validator: controller.validateName,
                       ),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
+
                     // Email Field
                     FadeInUp(
-                      duration: Duration(milliseconds: 1900),
-                      child: TextFormField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: "Email",
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Email is required';
-                          } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-                              .hasMatch(value)) {
-                            return 'Enter a valid email';
-                          }
-                          return null;
-                        },
+                      duration: const Duration(milliseconds: 1900),
+                      child: _buildTextField(
+                        controller: controller.emailController,
+                        labelText: "Email",
+                        validator: controller.validateEmail,
                       ),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
+
                     // Phone Field
                     FadeInUp(
-                      duration: Duration(milliseconds: 2000),
-                      child: TextFormField(
-                        controller: _phoneController,
-                        decoration: InputDecoration(
-                          labelText: "Phone Number",
-                          border: OutlineInputBorder(),
-                        ),
+                      duration: const Duration(milliseconds: 2000),
+                      child: _buildTextField(
+                        controller: controller.phoneController,
+                        labelText: "Phone Number",
+                        validator: controller.validatePhone,
                         keyboardType: TextInputType.phone,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Phone Number is required';
-                          } else if (!RegExp(r'^\d{10,15}$').hasMatch(value)) {
-                            return 'Enter a valid phone number';
-                          }
-                          return null;
-                        },
                       ),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
+
                     // Company Field
                     FadeInUp(
-                      duration: Duration(milliseconds: 2100),
-                      child: TextField(
-                        controller: _companyController,
-                        decoration: InputDecoration(
-                          labelText: "Company",
-                          border: OutlineInputBorder(),
-                        ),
+                      duration: const Duration(milliseconds: 2100),
+                      child: _buildTextField(
+                        controller: controller.companyController,
+                        labelText: "Company",
                       ),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
+
                     // Position Field
                     FadeInUp(
-                      duration: Duration(milliseconds: 2200),
-                      child: TextField(
-                        controller: _positionController,
-                        decoration: InputDecoration(
-                          labelText: "Position",
-                          border: OutlineInputBorder(),
-                        ),
+                      duration: const Duration(milliseconds: 2200),
+                      child: _buildTextField(
+                        controller: controller.positionController,
+                        labelText: "Position",
                       ),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
+
                     // Password Field
                     FadeInUp(
-                      duration: Duration(milliseconds: 2300),
-                      child: TextFormField(
-                        controller: _passwordController,
+                      duration: const Duration(milliseconds: 2300),
+                      child: _buildTextField(
+                        controller: controller.passwordController,
+                        labelText: "Password",
                         obscureText: true,
-                        decoration: InputDecoration(
-                          labelText: "Password",
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Password is required';
-                          } else if (value.length < 6) {
-                            return 'Password must be at least 6 characters long';
-                          }
-                          return null;
+                        validator: controller.validatePassword,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Terms and Conditions
+                    FadeInUp(
+                      duration: const Duration(milliseconds: 2400),
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: controller.isTermsAccepted,
+                        builder: (context, value, child) {
+                          return Row(
+                            children: [
+                              Checkbox(
+                                value: value,
+                                onChanged: (newValue) {
+                                  controller.isTermsAccepted.value = newValue ?? false;
+                                },
+                              ),
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                    text: "I agree to the processing of ",
+                                    children: [
+                                      TextSpan(
+                                        text: "Personal data",
+                                        style: TextStyle(
+                                          color: const Color.fromRGBO(143, 148, 251, 1),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
                         },
                       ),
                     ),
-                    SizedBox(height: 10),
-                    // Checkbox for Terms
-                    FadeInUp(
-                      duration: Duration(milliseconds: 2400),
-                      child: Row(
-                        children: [
-                          Checkbox(value: true, onChanged: (value) {}),
-                          Expanded(
-                            child: Text.rich(
-                              TextSpan(
-                                text: "I agree to the processing of ",
-                                children: [
-                                  TextSpan(
-                                    text: "Personal data",
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(143, 148, 251, 1),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+
                     // Sign Up Button
                     FadeInUp(
-                      duration: Duration(milliseconds: 2500),
-                      child: GestureDetector(
-                        onTap: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                          signUp();
-                          }
-                        },
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: LinearGradient(
-                              colors: [
-                                Color.fromRGBO(143, 148, 251, 1),
-                                Color.fromRGBO(143, 148, 251, .6),
-                              ],
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                      duration: const Duration(milliseconds: 2500),
+                      child: _buildSignUpButton(),
                     ),
-                    SizedBox(height: 30),
-                    // Sign Up with Social Media
+                    const SizedBox(height: 30),
+
+                    // Social Media Sign Up
                     FadeInUp(
-                      duration: Duration(milliseconds: 2600),
-                      child: Column(
-                        children: [
-                          Text(
-                            "Sign up with",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.facebook,
-                                  color: Color(0xFF5D7CFB),
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.g_translate,
-                                  color: Colors.red,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.apple,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      duration: const Duration(milliseconds: 2600),
+                      child: _buildSocialSignUpOptions(),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+
                     // Navigation to Sign In
                     FadeInUp(
-                      duration: Duration(milliseconds: 2700),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/sign-in');
-                        },
-                        child: Text.rich(
-                          TextSpan(
-                            text: "Already have an account? ",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "Sign in",
-                                style: TextStyle(
-                                  color: Color.fromRGBO(143, 148, 251, 1),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      duration: const Duration(milliseconds: 2700),
+                      child: _buildSignInOption(),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                   ],
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      height: 400,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/background.png'),
+          fit: BoxFit.fill,
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            left: 30,
+            width: 80,
+            height: 200,
+            child: FadeInUp(
+              duration: const Duration(seconds: 1),
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/light-1.png'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 140,
+            width: 80,
+            height: 150,
+            child: FadeInUp(
+              duration: const Duration(milliseconds: 1200),
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/light-2.png'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 40,
+            top: 40,
+            width: 80,
+            height: 150,
+            child: FadeInUp(
+              duration: const Duration(milliseconds: 1300),
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/clock.png'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            child: FadeInUp(
+              duration: const Duration(milliseconds: 1600),
+              child: Container(
+                margin: const EdgeInsets.only(top: 50),
+                child: const Center(
+                  child: Text(
+                    "Sign Up",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: const OutlineInputBorder(),
+      ),
+      validator: validator,
+    );
+  }
+
+  Widget _buildSignUpButton() {
+    return GestureDetector(
+      onTap: () {
+        if (_formKey.currentState?.validate() ?? false) {
+          controller.signUp(context);
+        }
+      },
+      child: Container(
+        height: 50,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: const LinearGradient(
+            colors: [
+              Color.fromRGBO(143, 148, 251, 1),
+              Color.fromRGBO(143, 148, 251, .6),
+            ],
+          ),
+        ),
+        child: const Center(
+          child: Text(
+            "Sign Up",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialSignUpOptions() {
+    return Column(
+      children: [
+        const Text(
+          "Sign up with",
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.facebook,
+                color: const Color(0xFF5D7CFB),
+              ),
+            ),
+            const SizedBox(width: 10),
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.g_translate,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(width: 10),
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.apple,
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSignInOption() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/sign-in');
+      },
+      child: Text.rich(
+        TextSpan(
+          text: "Already have an account? ",
+          style: const TextStyle(
+            color: Colors.grey,
+            fontSize: 14,
+          ),
+          children: [
+            TextSpan(
+              text: "Sign in",
+              style: TextStyle(
+                color: const Color.fromRGBO(143, 148, 251, 1),
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

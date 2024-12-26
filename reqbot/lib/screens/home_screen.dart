@@ -10,14 +10,26 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState()=>_HomeScreen();}
 
-  class _HomeScreen extends State<HomeScreen>{
+ class _HomeScreen extends State<HomeScreen> {
+  final AuthServices authServices = AuthServices();
 
-    final authServices=AuthServices();
-
-    void logout()async{
+  void logout() async {
+    try {
       await authServices.signOut();
-      
+      // After successful sign-out, navigate to the sign-in page
+      if (!mounted) return; // Ensure the widget is still mounted
+      Navigator.pushNamedAndRemoveUntil(
+        context, 
+        '/sign-in', // Your login route
+        (route) => false, // Removes all previous routes
+      );
+    } catch (e) {
+      // Handle logout errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error during logout: $e")),
+      );
     }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,31 +51,31 @@ class HomeScreen extends StatefulWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-            Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    const Text(
-      'Home',
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    Row(
-      children: [
-        CircleAvatar(
-          backgroundColor: Colors.white,
-          child: Icon(Icons.person, color: Color(0xFF3F51B5)),
-        ),
-        IconButton(
-          onPressed: logout, // Logout action
-          icon: const Icon(Icons.logout, color: Colors.white),
-        ),
-      ],
-    ),
-  ],
-),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Home',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: Icon(Icons.person, color: Color(0xFF3F51B5)),
+                          ),
+                          IconButton(
+                            onPressed: logout, // Call the logout method
+                            icon: const Icon(Icons.logout, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 24),
                   const Text(
                     'Recent Projects',
