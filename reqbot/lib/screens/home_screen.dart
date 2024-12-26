@@ -14,22 +14,35 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreen extends State<HomeScreen> {
   final AuthServices authServices = AuthServices();
 
+  List<String> projectNames = ['Project X', 'Project Y', 'Project Z'];
+  List<String> projectStatuses = [
+    'completed',
+    'attention_needed',
+    'in_progress'
+  ];
+
   void logout() async {
     try {
       await authServices.signOut();
-      // After successful sign-out, navigate to the sign-in page
-      if (!mounted) return; // Ensure the widget is still mounted
+      if (!mounted) return;
       Navigator.pushNamedAndRemoveUntil(
         context,
-        '/sign-in', // Your login route
-        (route) => false, // Removes all previous routes
+        '/sign-in',
+        (route) => false,
       );
     } catch (e) {
-      // Handle logout errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error during logout: $e")),
       );
     }
+  }
+
+  // Remove a project from the list
+  void removeProject(int index) {
+    setState(() {
+      projectNames.removeAt(index);
+      projectStatuses.removeAt(index);
+    });
   }
 
   @override
@@ -70,7 +83,7 @@ class _HomeScreen extends State<HomeScreen> {
                             child: Icon(Icons.person, color: Color(0xFF3F51B5)),
                           ),
                           IconButton(
-                            onPressed: logout, // Call the logout method
+                            onPressed: logout,
                             icon: const Icon(Icons.logout, color: Colors.white),
                           ),
                         ],
@@ -89,22 +102,12 @@ class _HomeScreen extends State<HomeScreen> {
                   const SizedBox(height: 16),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: 3, // Replace with your actual project count
+                      itemCount: projectNames.length,
                       itemBuilder: (context, index) {
-                        final projectNames = [
-                          'Project X',
-                          'Project Y',
-                          'Project Z'
-                        ];
-                        final projectStatuses = [
-                          'completed',
-                          'attention_needed',
-                          'in_progress'
-                        ];
-
                         return AnimatedProjectCard(
                           projectName: projectNames[index],
                           status: projectStatuses[index],
+                          onRemove: () => removeProject(index),
                         );
                       },
                     ),
@@ -141,7 +144,6 @@ class _HomeScreen extends State<HomeScreen> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            // Navigate to the Project Name Input Screen
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -186,127 +188,6 @@ class _HomeScreen extends State<HomeScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class AnimatedProjectCard extends StatelessWidget {
-  final String projectName;
-  final String status;
-
-  const AnimatedProjectCard({required this.projectName, required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    final favoritesProvider = Provider.of<FavoritesProvider>(context);
-    final isFavorite = favoritesProvider.isFavorite(projectName);
-
-    return TweenAnimationBuilder(
-      duration: const Duration(milliseconds: 500),
-      tween: Tween<double>(begin: 0.8, end: 1),
-      curve: Curves.easeOut,
-      builder: (context, double scale, child) {
-        return Transform.scale(
-          scale: scale,
-          child: InkWell(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$projectName tapped')),
-              );
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ListTile(
-                title: Text(projectName),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      status == 'completed'
-                          ? Icons.check_circle
-                          : status == 'attention_needed'
-                              ? Icons.error
-                              : Icons.access_time,
-                      color: status == 'completed'
-                          ? Colors.green
-                          : status == 'attention_needed'
-                              ? Colors.red
-                              : Colors.orange,
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : Colors.grey,
-                      ),
-                      onPressed: () {
-                        favoritesProvider.toggleFavorite(projectName);
-                        final snackBarMessage = isFavorite
-                            ? '$projectName removed from favorites'
-                            : '$projectName added to favorites';
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(snackBarMessage)),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class NotificationButton extends StatelessWidget {
-  final String message;
-
-  const NotificationButton({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$message tapped')),
-        );
-      },
-      splashColor: Colors.blue.withOpacity(0.2),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 8,
-              spreadRadius: 2,
-              offset: const Offset(2, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.notifications, color: Color(0xFF3F51B5)),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
