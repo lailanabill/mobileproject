@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reqbot/auth/auth_services.dart';
+import 'package:reqbot/services/auth/auth_services.dart';
 
 class SignInController {
   final AuthServices authServices = AuthServices();

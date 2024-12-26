@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reqbot/auth/auth_services.dart';
+import 'package:reqbot/services/auth/auth_services.dart';
 import 'package:reqbot/providers/favorites_provider.dart';
 import 'package:reqbot/screens/project_name_input_screen.dart';
 
@@ -8,9 +8,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState()=>_HomeScreen();}
+  State<HomeScreen> createState() => _HomeScreen();
+}
 
- class _HomeScreen extends State<HomeScreen> {
+class _HomeScreen extends State<HomeScreen> {
   final AuthServices authServices = AuthServices();
 
   void logout() async {
@@ -19,7 +20,7 @@ class HomeScreen extends StatefulWidget {
       // After successful sign-out, navigate to the sign-in page
       if (!mounted) return; // Ensure the widget is still mounted
       Navigator.pushNamedAndRemoveUntil(
-        context, 
+        context,
         '/sign-in', // Your login route
         (route) => false, // Removes all previous routes
       );
