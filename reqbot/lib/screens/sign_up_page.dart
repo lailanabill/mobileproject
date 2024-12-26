@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:reqbot/auth/auth_services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage>{
+
+  final authServices = AuthServices();
+
+
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -9,6 +22,29 @@ class SignUpPage extends StatelessWidget {
   final TextEditingController _companyController = TextEditingController();
   final TextEditingController _positionController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  void signUp() async {
+  final email = _emailController.text;
+  final password = _passwordController.text;
+  final phone = _phoneController.text;
+  final company = _companyController.text;
+  final position = _positionController.text;
+  final name = _nameController.text;
+
+  try {
+    final response = await authServices.signUpWithEmailPassword(name, email, phone, password, company, position);
+    if (response.user != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Sign-up successful! Please verify your email.")),
+      );
+      Navigator.pushNamed(context, '/sign-in');
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error during sign-up: $e")),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -240,7 +276,7 @@ class SignUpPage extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           if (_formKey.currentState?.validate() ?? false) {
-                            Navigator.pushNamed(context, '/HomeScreen');
+                          signUp();
                           }
                         },
                         child: Container(

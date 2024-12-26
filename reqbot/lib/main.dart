@@ -9,6 +9,7 @@ import 'screens/upload_convert.dart';
 import 'screens/welcome_page.dart';
 import 'screens/home_screen.dart';
 import 'screens/favorites_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.light,
@@ -20,8 +21,13 @@ var kDarkColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 5, 99, 125),
 );
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://lfmhmnbqlyqdiwndbiyl.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmbWhtbmJxbHlxZGl3bmRiaXlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUwODQ5NjIsImV4cCI6MjA1MDY2MDk2Mn0.EuhYfqnTT2oreH5i7Lr37x8V36PXkpwJVe0uTs21Lys',
+  );
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

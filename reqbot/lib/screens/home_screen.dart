@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reqbot/auth/auth_services.dart';
 import 'package:reqbot/providers/favorites_provider.dart';
 import 'package:reqbot/screens/project_name_input_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState()=>_HomeScreen();}
+
+  class _HomeScreen extends State<HomeScreen>{
+
+    final authServices=AuthServices();
+
+    void logout()async{
+      await authServices.signOut();
+      
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +39,31 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Home',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person, color: Color(0xFF3F51B5)),
-                      ),
-                    ],
-                  ),
+            Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    const Text(
+      'Home',
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    Row(
+      children: [
+        CircleAvatar(
+          backgroundColor: Colors.white,
+          child: Icon(Icons.person, color: Color(0xFF3F51B5)),
+        ),
+        IconButton(
+          onPressed: logout, // Logout action
+          icon: const Icon(Icons.logout, color: Colors.white),
+        ),
+      ],
+    ),
+  ],
+),
                   const SizedBox(height: 24),
                   const Text(
                     'Recent Projects',

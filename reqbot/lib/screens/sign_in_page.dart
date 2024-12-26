@@ -1,10 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:reqbot/auth/auth_services.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  final authServices = AuthServices();
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+ void login() async {
+  final email = _emailController.text;
+  final password = _passwordController.text;
+
+  try {
+    final response = await authServices.signInWithEmailPassword(email, password);
+
+    if (response.session != null) {
+      print("Login successful! Session: ${response.session}");
+      Navigator.pushReplacementNamed(context, '/HomeScreen'); // Navigate to Home Screen
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login failed: No session found")),
+      );
+    }
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login Error: $e")),
+      );
+    }
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +235,7 @@ class SignInPage extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             if (_formKey.currentState?.validate() ?? false) {
-                              Navigator.pushNamed(context, '/HomeScreen');
+                              login(); // Call the login method
                             }
                           },
                           child: Container(
