@@ -6,7 +6,7 @@ import 'package:reqbot/controllers/welcome_controller.dart';
 class WelcomePage extends StatelessWidget {
   final WelcomeController controller = WelcomeController();
 
-  WelcomePage({Key? key}) : super(key: key);
+  WelcomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class StructuredRequirementsScreen extends StatelessWidget {
-  const StructuredRequirementsScreen({Key? key}) : super(key: key);
+  const StructuredRequirementsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

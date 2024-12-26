@@ -4,7 +4,7 @@ import 'package:reqbot/screens/structured_requirements.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class Record extends StatefulWidget {
-  const Record({Key? key}) : super(key: key);
+  const Record({super.key});
 
   @override
   _RecordState createState() => _RecordState();

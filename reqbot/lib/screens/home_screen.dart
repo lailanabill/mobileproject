@@ -5,7 +5,7 @@ import 'package:reqbot/screens/project_name_input_screen.dart';
 import '../database/database_helper.dart'; // Import the database helper
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();

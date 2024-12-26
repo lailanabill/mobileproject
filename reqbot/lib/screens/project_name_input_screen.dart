@@ -4,12 +4,12 @@ import 'upload_convert.dart';
 import '../database/database_helper.dart'; // Import the database helper
 
 class ProjectNameInputScreen extends StatelessWidget {
-  const ProjectNameInputScreen({Key? key}) : super(key: key);
+  const ProjectNameInputScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     TextEditingController projectNameController = TextEditingController();
-    final DatabaseHelper _dbHelper =
+    final DatabaseHelper dbHelper =
         DatabaseHelper(); // Initialize the database helper
 
     return Scaffold(
@@ -187,7 +187,7 @@ class ProjectNameInputScreen extends StatelessWidget {
                             );
                           } else {
                             // Insert project into the database
-                            await _dbHelper.insertProject({
+                            await dbHelper.insertProject({
                               'name': projectNameController.text,
                               'status': 'in_progress', // Initial status
                             });
@@ -232,12 +232,12 @@ class UploadButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const UploadButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.icon,
     required this.color,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

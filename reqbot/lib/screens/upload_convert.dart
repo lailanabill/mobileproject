@@ -4,7 +4,7 @@ import 'structured_requirements.dart';
 import 'package:file_picker/file_picker.dart';
 
 class UploadConvertScreen extends StatefulWidget {
-  const UploadConvertScreen({Key? key}) : super(key: key);
+  const UploadConvertScreen({super.key});
 
   @override
   _UploadConvertScreenState createState() => _UploadConvertScreenState();
@@ -276,12 +276,12 @@ class UploadButton extends StatelessWidget {
   final Color color;
 
   const UploadButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.icon,
     required this.onPressed,
     required this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

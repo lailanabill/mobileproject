@@ -3,7 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:reqbot/controllers/signup_controller.dart';
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+  const SignUpPage({super.key});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();

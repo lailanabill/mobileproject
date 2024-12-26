@@ -47,7 +47,7 @@ void main() async {
 }
 
 class ReqBotApp extends StatelessWidget {
-  const ReqBotApp({Key? key}) : super(key: key);
+  const ReqBotApp({super.key});
 
   @override
   Widget build(BuildContext context) {
