@@ -88,8 +88,27 @@ class _HomeScreenState extends State<HomeScreen> {
                               final projectId = _projects[index]['id'];
 
                               return Slidable(
-                                actionPane: SlidableDrawerActionPane(),
-                                actionExtentRatio: 0.25,
+                                key: ValueKey(projectId),
+                                endActionPane: ActionPane(
+                                  motion: const ScrollMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (context) {
+                                        _deleteProject(projectId);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text('$projectName deleted'),
+                                          ),
+                                        );
+                                      },
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.delete,
+                                      label: 'Delete',
+                                    ),
+                                  ],
+                                ),
                                 child: Card(
                                   margin: const EdgeInsets.symmetric(
                                       horizontal: 16.0, vertical: 8.0),
@@ -101,22 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                   ),
                                 ),
-                                secondaryActions: [
-                                  IconSlideAction(
-                                    caption: 'Delete',
-                                    color: Colors.red,
-                                    icon: Icons.delete,
-                                    onTap: () {
-                                      _deleteProject(projectId);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                            content:
-                                                Text('$projectName deleted')),
-                                      );
-                                    },
-                                  ),
-                                ],
                               );
                             },
                           ),
