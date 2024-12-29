@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:reqbot/database/database_helper.dart';
+import 'package:reqbot/controllers/project_name_controller.dart';
+import '../widgets/project_name_input_field.dart';
+import '../widgets/save_button.dart';
 
 class ProjectNameScreen extends StatefulWidget {
   const ProjectNameScreen({super.key});
@@ -10,29 +12,18 @@ class ProjectNameScreen extends StatefulWidget {
 
 class _ProjectNameScreenState extends State<ProjectNameScreen> {
   final TextEditingController _projectNameController = TextEditingController();
+  final ProjectNameController _controller = ProjectNameController();
 
-  Future<void> _saveProject() async {
-    if (_projectNameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a project name.')),
-      );
-      return;
-    }
-
+  Future<void> _handleSaveProject() async {
     try {
-      await DBHelper.instance.insertProject(
-        _projectNameController.text,
-        'in_progress', // Default status
-      );
-
+      await _controller.saveProject(_projectNameController.text);
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Project saved successfully.')));
-
+        const SnackBar(content: Text('Project saved successfully.')),
+      );
       Navigator.pop(context);
     } catch (e) {
-      print('Error saving project: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving project: $e')),
+        SnackBar(content: Text(e.toString())),
       );
     }
   }
@@ -49,23 +40,9 @@ class _ProjectNameScreenState extends State<ProjectNameScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Project Name',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _projectNameController,
-              decoration: const InputDecoration(
-                hintText: 'Enter project name',
-                border: OutlineInputBorder(),
-              ),
-            ),
+            ProjectNameInputField(controller: _projectNameController),
             const Spacer(),
-            ElevatedButton(
-              onPressed: _saveProject,
-              child: const Text('Save Project'),
-            ),
+            SaveButton(onPressed: _handleSaveProject),
           ],
         ),
       ),
