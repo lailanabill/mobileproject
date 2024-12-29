@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; // Added for dotenv functionality
-import 'package:reqbot/screens/mail_page.dart';
-import 'package:reqbot/providers/favorites_provider.dart';
-import 'screens/record.dart';
+import 'package:reqbot/views/screens/mail_page.dart';
+import 'package:reqbot/services/providers/favorites_provider.dart';
+import 'views/screens/record.dart';
 import 'views/screens/sign_in_page.dart';
 import 'views/screens/sign_up_page.dart';
 import 'views/screens/welcome_page.dart';
-import 'screens/home_screen.dart';
-import 'screens/favorites_screen.dart';
+import 'views/screens/home_screen.dart';
+import 'views/screens/favorites_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 var kColorScheme = ColorScheme.fromSeed(

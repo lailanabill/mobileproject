@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reqbot/database/database_helper.dart';
-import 'package:reqbot/screens/ProjectDetailsScreen.dart';
+import 'package:reqbot/views/screens/ProjectDetailsScreen.dart';
 import 'package:reqbot/services/auth/auth_services.dart';
-import 'package:reqbot/providers/favorites_provider.dart';
+import 'package:reqbot/services/providers/favorites_provider.dart';
 import 'record.dart';
 
 class HomeScreen extends StatefulWidget {

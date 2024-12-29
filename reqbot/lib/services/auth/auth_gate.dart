@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reqbot/screens/home_screen.dart';
+import 'package:reqbot/views/screens/home_screen.dart';
 import 'package:reqbot/views/screens/sign_in_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
