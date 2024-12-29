@@ -233,7 +233,7 @@ class AnimatedProjectCard extends StatelessWidget {
   final VoidCallback onRemove;
   final VoidCallback onTap;
 
-  const AnimatedProjectCard({
+  const AnimatedProjectCard({super.key, 
     required this.projectName,
     required this.onRemove,
     required this.onTap,
@@ -291,7 +291,7 @@ class AnimatedProjectCard extends StatelessWidget {
 class NotificationButton extends StatelessWidget {
   final String message;
 
-  const NotificationButton({required this.message});
+  const NotificationButton({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
