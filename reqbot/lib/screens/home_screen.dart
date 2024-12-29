@@ -172,7 +172,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                   ),
-                  
                   const SizedBox(height: 16),
                   Center(
                     child: Column(
@@ -215,6 +214,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(color: Color(0xFF3F51B5)),
                           ),
                         ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/MailPage');
+                          },
+                          child: const Text('Go to Mail Page'),
+                        )
                       ],
                     ),
                   ),
@@ -233,7 +238,8 @@ class AnimatedProjectCard extends StatelessWidget {
   final VoidCallback onRemove;
   final VoidCallback onTap;
 
-  const AnimatedProjectCard({super.key, 
+  const AnimatedProjectCard({
+    super.key,
     required this.projectName,
     required this.onRemove,
     required this.onTap,
