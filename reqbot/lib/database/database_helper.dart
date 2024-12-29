@@ -1,44 +1,51 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
-class DatabaseHelper {
-  static final DatabaseHelper _instance = DatabaseHelper._internal();
+class DBHelper {
+  static final DBHelper instance = DBHelper._init();
   static Database? _database;
 
-  factory DatabaseHelper() {
-    return _instance;
-  }
-
-  DatabaseHelper._internal();
+  DBHelper._init();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDatabase();
+    _database = await _initDB('projects.db');
     return _database!;
   }
 
-  Future<Database> _initDatabase() async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, 'projects.db');
+  Future<Database> _initDB(String filePath) async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, filePath);
+
     return await openDatabase(
       path,
       version: 1,
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE projects(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, status TEXT)',
-        );
-      },
+      onCreate: _createDB,
     );
   }
 
-  Future<void> insertProject(Map<String, dynamic> project) async {
+  Future<void> _createDB(Database db, int version) async {
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS projects (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      transcription TEXT NOT NULL
+    )
+  ''');
+  }
+
+  Future<int> insertProject(String name, String transcription) async {
     final db = await database;
-    await db.insert(
+    return await db
+        .insert('projects', {'name': name, 'transcription': transcription});
+  }
+
+  Future<int> deleteProject(int id) async {
+    final db = await database;
+    return await db.delete(
       'projects',
-      project,
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      where: 'id = ?', // Match by id
+      whereArgs: [id],
     );
   }
 
@@ -47,12 +54,9 @@ class DatabaseHelper {
     return await db.query('projects');
   }
 
-  Future<void> deleteProject(int id) async {
+  Future<Map<String, dynamic>> getProjectById(int id) async {
     final db = await database;
-    await db.delete(
-      'projects',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final result = await db.query('projects', where: 'id = ?', whereArgs: [id]);
+    return result.first;
   }
 }

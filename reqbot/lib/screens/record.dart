@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:reqbot/screens/structured_requirements.dart';
+import 'package:reqbot/database/database_helper.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'home_screen.dart';
 
 class Record extends StatefulWidget {
   const Record({super.key});
@@ -11,10 +12,10 @@ class Record extends StatefulWidget {
 }
 
 class _RecordState extends State<Record> {
-  final List<String> uploadedFiles = [];
   late stt.SpeechToText _speech;
   bool _isListening = false;
   String _transcription = '';
+  final TextEditingController _projectNameController = TextEditingController();
 
   @override
   void initState() {
@@ -22,36 +23,56 @@ class _RecordState extends State<Record> {
     _speech = stt.SpeechToText();
   }
 
- Future<void> _startListening() async {
+  
+Future<void> _startListening() async {
   try {
     var status = await Permission.microphone.request();
-    if (!status.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Microphone permission is required.')),
+
+    if (status.isGranted) {
+      // Permission is granted
+      bool available = await _speech.initialize(
+        onStatus: (status) => print('Speech status: $status'),
+        onError: (error) => print('Speech error: $error'),
       );
-      return;
-    }
 
-    bool available = await _speech.initialize(
-      onStatus: (status) => print('Speech status: $status'),
-      onError: (error) => print('Speech error: $error'),
-    );
+      if (available) {
+        setState(() {
+          _isListening = true;
+        });
 
-    if (available) {
-      setState(() {
-        _isListening = true;
-      });
-
-      _speech.listen(
-        onResult: (result) {
-          setState(() {
-            _transcription = result.recognizedWords;
-          });
-        },
-      );
-    } else {
+        _speech.listen(
+          onResult: (result) {
+            setState(() {
+              _transcription = result.recognizedWords;
+            });
+          },
+        );
+      } else {
+        setState(() {
+          _isListening = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Speech recognition unavailable.')),
+        );
+      }
+    } else if (status.isDenied) {
+      // Permission is denied
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Speech recognition is not available.')),
+        const SnackBar(
+          content: Text('Microphone permission is required.'),
+        ),
+      );
+    } else if (status.isPermanentlyDenied) {
+      // Permission is permanently denied, redirect to settings
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+              'Microphone permission is permanently denied. Please enable it in settings.'),
+          action: SnackBarAction(
+            label: 'Open Settings',
+            onPressed: openAppSettings, // Redirect to settings
+          ),
+        ),
       );
     }
   } catch (e) {
@@ -67,18 +88,47 @@ class _RecordState extends State<Record> {
     await _speech.stop();
     setState(() {
       _isListening = false;
-      uploadedFiles.add(_transcription);
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Speech-to-text completed.')),
-    );
+  }
+
+  Future<void> _saveProject() async {
+    if (_projectNameController.text.isEmpty || _transcription.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Please enter a project name and record audio.')),
+      );
+      return;
+    }
+
+    try {
+      // Save project to database
+      await DBHelper.instance.insertProject(
+        _projectNameController.text,
+        _transcription,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Project saved successfully.')),
+      );
+
+      // Navigate back to HomeScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } catch (e) {
+      print('Error saving project: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving project: $e')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Upload & Convert'),
+        title: const Text('Record'),
         backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
@@ -87,142 +137,38 @@ class _RecordState extends State<Record> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Upload Options',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              'Project Name',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _projectNameController,
+              decoration: const InputDecoration(
+                hintText: 'Enter project name',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 16),
-
-            // Animated Live Speech-to-Text Button
-            TweenAnimationBuilder(
-              duration: const Duration(milliseconds: 800),
-              tween: Tween<double>(begin: 0, end: 1),
-              builder: (context, double scale, child) {
-                return Transform.scale(
-                  scale: scale,
-                  child: child,
-                );
+            ElevatedButton(
+              onPressed: () async {
+                if (_isListening) {
+                  await _stopListening();
+                } else {
+                  await _startListening();
+                }
               },
-              child: Center(
-                child: ElevatedButton.icon(
-                  icon: Icon(_isListening ? Icons.mic_off : Icons.mic),
-                  label: Text(_isListening ? 'Stop Listening' : 'Start Listening'),
-                  onPressed: _isListening ? _stopListening : _startListening,
-                  style: ElevatedButton.styleFrom(
-                    iconColor: _isListening ? Colors.red : Colors.blueAccent,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Animated Transcription Display
-            if (_isListening || _transcription.isNotEmpty)
-              TweenAnimationBuilder(
-                duration: const Duration(milliseconds: 700),
-                tween: Tween<double>(begin: 0, end: 1),
-                builder: (context, double opacity, child) {
-                  return Opacity(
-                    opacity: opacity,
-                    child: child,
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.only(top: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    _transcription.isEmpty
-                        ? 'Listening... Speak now.'
-                        : 'Transcription: $_transcription',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-
-            const SizedBox(height: 24),
-
-            // Animated Uploaded Files Section
-            const Text(
-              'Uploaded Files',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              child: Text(_isListening ? 'Stop Recording' : 'Start Recording'),
             ),
             const SizedBox(height: 16),
-
-            // Display List of Uploaded/Transcribed Files with Animation
-            Expanded(
-              child: TweenAnimationBuilder(
-                duration: const Duration(milliseconds: 800),
-                tween: Tween<double>(begin: 0, end: 1),
-                builder: (context, double opacity, child) {
-                  return Opacity(
-                    opacity: opacity,
-                    child: child,
-                  );
-                },
-                child: ListView.builder(
-                  itemCount: uploadedFiles.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(uploadedFiles[index]),
-                      trailing: const Icon(Icons.check_circle, color: Colors.green),
-                    );
-                  },
-                ),
+            if (_transcription.isNotEmpty)
+              Text(
+                'Transcription: $_transcription',
+                style: const TextStyle(fontSize: 16),
               ),
-            ),
-
-            // Animated Navigation Buttons
-            TweenAnimationBuilder(
-              duration: const Duration(milliseconds: 800),
-              tween: Tween<Offset>(
-                begin: const Offset(0, 0.5),
-                end: const Offset(0, 0),
-              ),
-              curve: Curves.easeOut,
-              builder: (context, Offset offset, child) {
-                return Transform.translate(offset: offset, child: child);
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      backgroundColor: Colors.blueAccent,
-                    ),
-                    child: const Text(
-                      'Back',
-                      style: TextStyle(color: Colors.white), // White text
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const StructuredRequirementsScreen(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      backgroundColor: Colors.blueAccent,
-                    ),
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(color: Colors.white), // White text
-                    ),
-                  ),
-                ],
-              ),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: _saveProject,
+              child: const Text('Save Project'),
             ),
           ],
         ),
