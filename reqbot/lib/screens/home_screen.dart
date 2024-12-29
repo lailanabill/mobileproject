@@ -172,28 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Notifications',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    flex: 1,
-                    child: ListView(
-                      children: const [
-                        NotificationButton(
-                            message: 'Feedback requested on Project X'),
-                        SizedBox(height: 10),
-                        NotificationButton(
-                            message: 'Validation issue detected in Project Y'),
-                      ],
-                    ),
-                  ),
+                  
                   const SizedBox(height: 16),
                   Center(
                     child: Column(
