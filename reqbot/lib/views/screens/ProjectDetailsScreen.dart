@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/transcription_display.dart';
 
 class ProjectDetailsScreen extends StatelessWidget {
   final String projectName;
@@ -19,23 +20,7 @@ class ProjectDetailsScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Transcription:',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              transcription,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ],
-        ),
+        child: TranscriptionDisplay(transcription: transcription),
       ),
     );
   }
