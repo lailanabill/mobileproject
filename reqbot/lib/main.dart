@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Added for dotenv functionality
+import 'package:reqbot/screens/mail_page.dart';
 import 'package:reqbot/providers/favorites_provider.dart';
 import 'screens/record.dart';
 import 'screens/sign_in_page.dart';
@@ -22,6 +24,7 @@ var kDarkColorScheme = ColorScheme.fromSeed(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env"); // Added dotenv initialization
   await Supabase.initialize(
     url: 'https://lfmhmnbqlyqdiwndbiyl.supabase.co',
     anonKey:
@@ -135,6 +138,7 @@ class ReqBotApp extends StatelessWidget {
         '/HomeScreen': (context) => HomeScreen(),
         '/record': (context) => Record(),
         '/FavoritesScreen': (context) => FavoritesScreen(),
+        '/MailPage': (context) => const MailPage(), // Added route for MailPage
       },
     );
   }
