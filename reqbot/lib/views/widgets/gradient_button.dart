@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:reqbot/controllers/signin_controller.dart';
 
-class LoginButton extends StatelessWidget {
-  final GlobalKey<FormState> formKey;
-  final SignInController controller;
+class GradientButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onTap;
 
-  const LoginButton({
+  const GradientButton({
     Key? key,
-    required this.formKey,
-    required this.controller,
+    required this.text,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        if (formKey.currentState?.validate() ?? false) {
-          controller.login(context);
-        }
-      },
+      onTap: onTap,
       child: Container(
         height: 50,
         decoration: BoxDecoration(
@@ -30,13 +25,12 @@ class LoginButton extends StatelessWidget {
             ],
           ),
         ),
-        child: const Center(
+        child: Center(
           child: Text(
-            "Login",
-            style: TextStyle(
+            text,
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 18, // Responsive text size if needed
             ),
           ),
         ),

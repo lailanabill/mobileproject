@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 
-class SignInHeader extends StatelessWidget {
-  final double logoSize;
+class AuthHeader extends StatelessWidget {
+  final String title;
+  final double height;
 
-  const SignInHeader({Key? key, required this.logoSize}) : super(key: key);
+  const AuthHeader({
+    Key? key,
+    required this.title,
+    required this.height,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      height: height,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/background.png'),
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
         ),
       ),
       child: Stack(
         children: [
           Positioned(
             left: 30,
-            width: logoSize,
+            width: 80,
             height: 200,
             child: FadeInUp(
               child: Image.asset('assets/images/light-1.png'),
@@ -28,7 +33,7 @@ class SignInHeader extends StatelessWidget {
           ),
           Positioned(
             left: 140,
-            width: logoSize,
+            width: 80,
             height: 150,
             child: FadeInUp(
               delay: const Duration(milliseconds: 200),
@@ -38,7 +43,7 @@ class SignInHeader extends StatelessWidget {
           Positioned(
             right: 40,
             top: 40,
-            width: logoSize,
+            width: 80,
             height: 150,
             child: FadeInUp(
               delay: const Duration(milliseconds: 400),
@@ -48,9 +53,9 @@ class SignInHeader extends StatelessWidget {
           Center(
             child: FadeInUp(
               delay: const Duration(milliseconds: 600),
-              child: const Text(
-                "Login",
-                style: TextStyle(
+              child: Text(
+                title,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
