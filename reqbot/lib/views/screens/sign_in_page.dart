@@ -33,7 +33,7 @@ class _SignInPageState extends State<SignInPage> {
                   children: [
                     CustomTextField(
                       controller: controller.emailController,
-                      labelText: "Email or Phone number",
+                      labelText: "Email",
                       validator: controller.validateEmail,
                     ),
                     const SizedBox(height: 15),
