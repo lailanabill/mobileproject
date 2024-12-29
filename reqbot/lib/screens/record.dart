@@ -22,8 +22,8 @@ class _RecordState extends State<Record> {
     _speech = stt.SpeechToText();
   }
 
-  Future<void> _startListening() async {
-    // Request microphone permission
+ Future<void> _startListening() async {
+  try {
     var status = await Permission.microphone.request();
     if (!status.isGranted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -50,14 +50,18 @@ class _RecordState extends State<Record> {
         },
       );
     } else {
-      setState(() {
-        _isListening = false;
-      });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Speech recognition unavailable.')),
+        const SnackBar(content: Text('Speech recognition is not available.')),
       );
     }
+  } catch (e) {
+    print('Error initializing speech-to-text: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error initializing speech-to-text: $e')),
+    );
   }
+}
+
 
   Future<void> _stopListening() async {
     await _speech.stop();
