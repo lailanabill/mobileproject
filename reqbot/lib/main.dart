@@ -7,7 +7,7 @@ import 'package:reqbot/providers/favorites_provider.dart';
 import 'screens/record.dart';
 import 'screens/sign_in_page.dart';
 import 'screens/sign_up_page.dart';
-import 'screens/welcome_page.dart';
+import 'views/screens/welcome_page.dart';
 import 'screens/home_screen.dart';
 import 'screens/favorites_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
