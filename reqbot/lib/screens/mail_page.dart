@@ -18,10 +18,6 @@ class _MailPageState extends State<MailPage> {
   final TextEditingController _contentController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  // creating smtp server for gmail
-  final gmailSmtp =
-      gmail(dotenv.env["GMAIL_MAIL"]!, dotenv.env["GMAIL_PASSWORD"]!);
-
   // outlook
   final outlookSmtp =
       hotmail(dotenv.env["OUTLOOK_EMAIL"]!, dotenv.env["OUTLOOK_PASSWORD"]!);
@@ -29,25 +25,6 @@ class _MailPageState extends State<MailPage> {
   // yandex mail
   final yandexSmtp =
       yandex(dotenv.env["YANDEX_EMAIL"]!, dotenv.env["YANDEX_PASSWORD"]!);
-
-  // send mail to the user using smtp
-  sendMailFromGmail(String sender, sub, text) async {
-    final message = Message()
-      ..from = Address(dotenv.env["GMAIL_MAIL"]!, 'Custom Support Stuff')
-      ..recipients.add(sender)
-      ..subject = sub
-      ..text = text;
-
-    try {
-      final sendReport = await send(message, gmailSmtp);
-      print('Message sent: $sendReport');
-    } on MailerException catch (e) {
-      print('Message not sent.');
-      for (var p in e.problems) {
-        print('Problem: ${p.code}: ${p.msg}');
-      }
-    }
-  }
 
   sendMailFromOutlook(String sender, sub, text) async {
     final message = Message()
@@ -129,15 +106,6 @@ class _MailPageState extends State<MailPage> {
                     validator: (value) =>
                         value!.isEmpty ? "Cannot be empty" : null),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        sendMailFromGmail(_recipientController.text,
-                            _subjectController.text, _contentController.text);
-                      }
-                    },
-                    child: const Text("Send mail from gmail")),
-                const SizedBox(height: 4),
                 ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
