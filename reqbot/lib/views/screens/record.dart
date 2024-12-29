@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:reqbot/database/database_helper.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:reqbot/controllers/record_controller.dart';
+import '../widgets/project_name_input_field.dart';
+import '../widgets/transcription_display.dart';
 import 'home_screen.dart';
 
 class Record extends StatefulWidget {
@@ -12,114 +12,47 @@ class Record extends StatefulWidget {
 }
 
 class _RecordState extends State<Record> {
-  late stt.SpeechToText _speech;
-  bool _isListening = false;
-  String _transcription = '';
+  final RecordController _controller = RecordController();
   final TextEditingController _projectNameController = TextEditingController();
+  String _transcription = '';
+  bool _isListening = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _speech = stt.SpeechToText();
-  }
-
-  
-Future<void> _startListening() async {
-  try {
-    var status = await Permission.microphone.request();
-
-    if (status.isGranted) {
-      // Permission is granted
-      bool available = await _speech.initialize(
-        onStatus: (status) => print('Speech status: $status'),
-        onError: (error) => print('Speech error: $error'),
-      );
-
-      if (available) {
-        setState(() {
-          _isListening = true;
-        });
-
-        _speech.listen(
-          onResult: (result) {
-            setState(() {
-              _transcription = result.recognizedWords;
-            });
-          },
-        );
-      } else {
-        setState(() {
-          _isListening = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Speech recognition unavailable.')),
-        );
-      }
-    } else if (status.isDenied) {
-      // Permission is denied
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Microphone permission is required.'),
-        ),
-      );
-    } else if (status.isPermanentlyDenied) {
-      // Permission is permanently denied, redirect to settings
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-              'Microphone permission is permanently denied. Please enable it in settings.'),
-          action: SnackBarAction(
-            label: 'Open Settings',
-            onPressed: openAppSettings, // Redirect to settings
-          ),
-        ),
-      );
-    }
-  } catch (e) {
-    print('Error initializing speech-to-text: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error initializing speech-to-text: $e')),
-    );
-  }
-}
-
-
-  Future<void> _stopListening() async {
-    await _speech.stop();
+  void _updateTranscription(String transcription) {
     setState(() {
-      _isListening = false;
+      _transcription = transcription;
     });
   }
 
-  Future<void> _saveProject() async {
-    if (_projectNameController.text.isEmpty || _transcription.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please enter a project name and record audio.')),
-      );
-      return;
-    }
-
+  Future<void> _handleStartStopRecording() async {
     try {
-      // Save project to database
-      await DBHelper.instance.insertProject(
-        _projectNameController.text,
-        _transcription,
+      if (_isListening) {
+        await _controller.stopListening();
+      } else {
+        await _controller.startListening(_updateTranscription);
+      }
+      setState(() {
+        _isListening = _controller.isListening;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
       );
+    }
+  }
 
+  Future<void> _handleSaveProject() async {
+    try {
+      await _controller.saveProject(_projectNameController.text, _transcription);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Project saved successfully.')),
       );
-
-      // Navigate back to HomeScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } catch (e) {
-      print('Error saving project: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving project: $e')),
+        SnackBar(content: Text(e.toString())),
       );
     }
   }
@@ -131,46 +64,28 @@ Future<void> _startListening() async {
         title: const Text('Record'),
         backgroundColor: Colors.blueAccent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Project Name',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _projectNameController,
-              decoration: const InputDecoration(
-                hintText: 'Enter project name',
-                border: OutlineInputBorder(),
+      body: SingleChildScrollView( // Wrap the content in a SingleChildScrollView
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ProjectNameInputField(controller: _projectNameController),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _handleStartStopRecording,
+                child: Text(_isListening ? 'Stop Recording' : 'Start Recording'),
               ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                if (_isListening) {
-                  await _stopListening();
-                } else {
-                  await _startListening();
-                }
-              },
-              child: Text(_isListening ? 'Stop Recording' : 'Start Recording'),
-            ),
-            const SizedBox(height: 16),
-            if (_transcription.isNotEmpty)
-              Text(
-                'Transcription: $_transcription',
-                style: const TextStyle(fontSize: 16),
+              const SizedBox(height: 16),
+              if (_transcription.isNotEmpty)
+                TranscriptionDisplay(transcription: _transcription),
+              const SizedBox(height: 16), // Add extra spacing
+              ElevatedButton(
+                onPressed: _handleSaveProject,
+                child: const Text('Save Project'),
               ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: _saveProject,
-              child: const Text('Save Project'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
