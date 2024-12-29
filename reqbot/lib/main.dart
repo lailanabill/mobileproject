@@ -25,6 +25,9 @@ var kDarkColorScheme = ColorScheme.fromSeed(
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env"); // Added dotenv initialization
+  print(dotenv.env["OUTLOOK_EMAIL"]);
+  print(dotenv.env);
+
   await Supabase.initialize(
     url: 'https://lfmhmnbqlyqdiwndbiyl.supabase.co',
     anonKey:
