@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:reqbot/database/database_helper.dart';
-import 'package:reqbot/views/screens/ProjectDetailsScreen.dart';
+import 'package:reqbot/controllers/home_controller.dart';
+import 'package:reqbot/models/project_model.dart';
+import '../widgets/home_header.dart';
+import '../widgets/home_action_buttons.dart';
+import '../widgets/animated_project_card.dart';
+import '../screens/projectDetailsScreen.dart';
+import '../screens/record.dart';
 import 'package:reqbot/services/auth/auth_services.dart';
-import 'package:reqbot/services/providers/favorites_provider.dart';
-import 'record.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,11 +16,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final AuthServices authServices = AuthServices();
-  List<Map<String, dynamic>> projects = [];
-  String? lastRemovedProject;
-  String? lastRemovedTranscription;
-  int? lastRemovedId;
+  final HomeController _controller = HomeController();
+  final AuthServices _authServices = AuthServices();
+  List<ProjectModel> _projects = [];
 
   @override
   void initState() {
@@ -27,52 +27,37 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadProjects() async {
-    final data = await DBHelper.instance.getProjects();
+    final projects = await _controller.loadProjects();
     setState(() {
-      projects = List<Map<String, dynamic>>.from(data);
+      _projects = projects;
     });
   }
 
-  Future<void> removeProject(int index) async {
-    lastRemovedProject = projects[index]['name'];
-    lastRemovedTranscription = projects[index]['transcription'];
-    lastRemovedId = projects[index]['id'];
-
-    final removedProject = projects[index];
+  Future<void> _removeProject(int index) async {
+    final removedProject = _projects[index];
+    await _controller.removeProject(removedProject.id);
     setState(() {
-      projects.removeAt(index);
+      _projects.removeAt(index);
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$lastRemovedProject removed'),
+        content: Text('${removedProject.name} removed'),
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () async {
-            setState(() {
-              projects.insert(index, removedProject);
-            });
-            await DBHelper.instance.insertProject(
-              lastRemovedProject!,
-              lastRemovedTranscription!,
-            );
+            await _controller.addProject(
+                removedProject.name, removedProject.transcription);
+            _loadProjects();
           },
         ),
-        duration: const Duration(seconds: 4),
       ),
     );
-
-    Future.delayed(const Duration(seconds: 4), () async {
-      if (lastRemovedId != null) {
-        await DBHelper.instance.deleteProject(lastRemovedId!);
-        lastRemovedId = null;
-      }
-    });
   }
 
-  void logout() async {
+  void _logout() async {
     try {
-      await authServices.signOut();
+      await _authServices.signOut();
       if (!mounted) return;
       Navigator.pushNamedAndRemoveUntil(
         context,
@@ -106,31 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Home',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            backgroundColor: Colors.white,
-                            child: Icon(Icons.person, color: Color(0xFF3F51B5)),
-                          ),
-                          IconButton(
-                            onPressed: logout,
-                            icon: const Icon(Icons.logout, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  HomeHeader(onLogout: _logout),
                   const SizedBox(height: 24),
                   const Text(
                     'Recent Projects',
@@ -142,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   Expanded(
-                    child: projects.isEmpty
+                    child: _projects.isEmpty
                         ? const Center(
                             child: Text(
                               'No recent projects.',
@@ -150,195 +111,41 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           )
                         : ListView.builder(
-                            itemCount: projects.length,
+                            itemCount: _projects.length,
                             itemBuilder: (context, index) {
-                              final project = projects[index];
+                              final project = _projects[index];
                               return AnimatedProjectCard(
-                                projectName: project['name'],
-                                onRemove: () => removeProject(index),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProjectDetailsScreen(
-                                        projectName: project['name'],
-                                        transcription: project['transcription'],
-                                      ),
+                                projectName: project.name,
+                                onRemove: () => _removeProject(index),
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProjectDetailsScreen(
+                                      projectName: project.name,
+                                      transcription: project.transcription,
                                     ),
-                                  );
-                                },
+                                  ),
+                                ),
                               );
                             },
                           ),
                   ),
                   const SizedBox(height: 16),
-                  Center(
-                    child: Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Record(),
-                              ),
-                            ).then((_) => _loadProjects());
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 40, vertical: 20),
-                            textStyle: const TextStyle(
-                              fontSize: 20,
-                              color: Color(0xFF3F51B5),
-                            ),
-                          ),
-                          child: const Text(
-                            'New Project',
-                            style: TextStyle(color: Color(0xFF3F51B5)),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/FavoritesScreen');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 40, vertical: 20),
-                          ),
-                          child: const Text(
-                            'View Favorites',
-                            style: TextStyle(color: Color(0xFF3F51B5)),
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/MailPage');
-                          },
-                          child: const Text('Go to Mail Page'),
-                        )
-                      ],
-                    ),
+                  HomeActionButtons(
+                    onNewProject: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Record(),
+                      ),
+                    ).then((_) => _loadProjects()),
+                    onViewFavorites: () => Navigator.pushNamed(context, '/FavoritesScreen'),
+                    onGoToMailPage: () => Navigator.pushNamed(context, '/MailPage'),
                   ),
                 ],
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class AnimatedProjectCard extends StatelessWidget {
-  final String projectName;
-  final VoidCallback onRemove;
-  final VoidCallback onTap;
-
-  const AnimatedProjectCard({
-    super.key,
-    required this.projectName,
-    required this.onRemove,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final favoritesProvider = Provider.of<FavoritesProvider>(context);
-    final isFavorite = favoritesProvider.isFavorite(projectName);
-
-    return TweenAnimationBuilder(
-      duration: const Duration(milliseconds: 500),
-      tween: Tween<double>(begin: 0.8, end: 1),
-      curve: Curves.easeOut,
-      builder: (context, double scale, child) {
-        return Transform.scale(
-          scale: scale,
-          child: Dismissible(
-            key: ValueKey(projectName),
-            background: Container(color: Colors.red),
-            onDismissed: (direction) {
-              onRemove();
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ListTile(
-                title: Text(projectName),
-                onTap: onTap,
-                trailing: IconButton(
-                  icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? Colors.red : Colors.grey,
-                  ),
-                  onPressed: () {
-                    favoritesProvider.toggleFavorite(projectName);
-                    final snackBarMessage = isFavorite
-                        ? '$projectName removed from favorites'
-                        : '$projectName added to favorites';
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(snackBarMessage)),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class NotificationButton extends StatelessWidget {
-  final String message;
-
-  const NotificationButton({super.key, required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$message tapped')),
-        );
-      },
-      splashColor: Colors.blue.withOpacity(0.2),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 8,
-              spreadRadius: 2,
-              offset: const Offset(2, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.notifications, color: Color(0xFF3F51B5)),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
