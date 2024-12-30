@@ -68,10 +68,59 @@ class _SignUpPageState extends State<SignUpPage> {
                       validator: controller.validatePassword,
                     ),
                     const SizedBox(height: 20),
+
+                    // Terms and Conditions
+                    FadeInUp(
+                      duration: const Duration(milliseconds: 2400),
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: controller.isTermsAccepted,
+                        builder: (context, value, child) {
+                          return Row(
+                            children: [
+                              Checkbox(
+                                value: value,
+                                onChanged: (newValue) {
+                                  controller.isTermsAccepted.value =
+                                      newValue ?? false;
+                                },
+                              ),
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                    text: "I agree to the processing of ",
+                                    children: [
+                                      TextSpan(
+                                        text: "Personal data",
+                                        style: TextStyle(
+                                          color: const Color.fromRGBO(
+                                              143, 148, 251, 1),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
                     GradientButton(
                       text: "Sign Up",
                       onTap: () {
                         if (_formKey.currentState?.validate() ?? false) {
+                          if (!controller.isTermsAccepted.value) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    "You must accept the terms and conditions."),
+                              ),
+                            );
+                            return;
+                          }
                           controller.signUp(context);
                         }
                       },
