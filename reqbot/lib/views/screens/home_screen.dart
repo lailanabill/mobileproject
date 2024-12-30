@@ -19,6 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final HomeController _controller = HomeController();
   final AuthServices _authServices = AuthServices();
   List<ProjectModel> _projects = [];
+  ProjectModel? _lastRemovedProject;
+  int? _lastRemovedProjectIndex;
 
   @override
   void initState() {
@@ -34,25 +36,41 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _removeProject(int index) async {
-    final removedProject = _projects[index];
-    await _controller.removeProject(removedProject.id);
+    _lastRemovedProject = _projects[index];
+    _lastRemovedProjectIndex = index;
+
     setState(() {
       _projects.removeAt(index);
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${removedProject.name} removed'),
+        content: Text('${_lastRemovedProject!.name} removed'),
         action: SnackBarAction(
           label: 'Undo',
-          onPressed: () async {
-            await _controller.addProject(
-                removedProject.name, removedProject.transcription);
-            _loadProjects();
+          onPressed: () {
+            if (_lastRemovedProject != null &&
+                _lastRemovedProjectIndex != null) {
+              setState(() {
+                _projects.insert(
+                    _lastRemovedProjectIndex!, _lastRemovedProject!);
+              });
+              _lastRemovedProject = null;
+              _lastRemovedProjectIndex = null;
+            }
           },
         ),
       ),
     );
+
+    // Proceed with actual deletion in the backend only if the action isn't undone
+    await Future.delayed(const Duration(seconds: 5), () async {
+      if (_lastRemovedProject != null) {
+        await _controller.removeProject(_lastRemovedProject!.id);
+        _lastRemovedProject = null;
+        _lastRemovedProjectIndex = null;
+      }
+    });
   }
 
   void _logout() async {
@@ -103,56 +121,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   Expanded(
-                    child: FutureBuilder<List<ProjectModel>>(
-                      future: _controller.loadProjects(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              'Error: ${snapshot.error}',
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return const Center(
+                    child: _projects.isEmpty
+                        ? const Center(
                             child: Text(
                               'No recent projects.',
                               style: TextStyle(color: Colors.white),
                             ),
-                          );
-                        }
-
-                        final projects = snapshot.data!;
-                        return ListView.builder(
-                          itemCount: projects.length,
-                          itemBuilder: (context, index) {
-                            final project = projects[index];
-                            return AnimatedProjectCard(
-                              projectName: project.name,
-                              onRemove: () async {
-                                await _controller.removeProject(project.id);
-                                setState(() {}); // Rebuild the FutureBuilder
-                              },
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProjectDetailsScreen(
-                                    projectName: project.name,
-                                    transcription: project.transcription,
+                          )
+                        : ListView.builder(
+                            itemCount: _projects.length,
+                            itemBuilder: (context, index) {
+                              final project = _projects[index];
+                              return AnimatedProjectCard(
+                                projectName: project.name,
+                                onRemove: () => _removeProject(index),
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProjectDetailsScreen(
+                                      projectName: project.name,
+                                      transcription: project.transcription,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+                              );
+                            },
+                          ),
                   ),
                   const SizedBox(height: 16),
                   HomeActionButtons(
@@ -161,7 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(
                         builder: (context) => const Record(),
                       ),
-                    ).then((_) => setState(() {})), // Rebuild the FutureBuilder
+                    ).then((_) =>
+                        _loadProjects()), // Reload projects after creating a new one
                     onViewFavorites: () =>
                         Navigator.pushNamed(context, '/FavoritesScreen'),
                     onGoToMailPage: () =>
