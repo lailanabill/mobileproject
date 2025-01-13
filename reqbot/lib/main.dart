@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import '/services/gemini_service.dart';
 import '/views/themes/light_theme.dart';
@@ -26,9 +27,8 @@ class ReqBotApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final geminiService = GeminiService(
-      apiKey: 'AIzaSyAO22q15ede83mnTQSl3OBfqWxrbxoXW-M', 
-    );
+    final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+    final geminiService = GeminiService(apiKey: apiKey);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'ReqBot',
