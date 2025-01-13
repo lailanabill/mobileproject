@@ -4,12 +4,14 @@ class HomeActionButtons extends StatelessWidget {
   final VoidCallback onNewProject;
   final VoidCallback onViewFavorites;
   final VoidCallback onGoToMailPage;
+  final VoidCallback onGoToChatPage;
 
   const HomeActionButtons({
     super.key,
     required this.onNewProject,
     required this.onViewFavorites,
-    required this.onGoToMailPage,
+    required this.onGoToMailPage, 
+    required this.onGoToChatPage,
   });
 
   @override
@@ -47,6 +49,9 @@ class HomeActionButtons extends StatelessWidget {
           ElevatedButton(
             onPressed: onGoToMailPage,
             child: const Text('Go to Mail Page'),
+          ),ElevatedButton(
+            onPressed: onGoToChatPage,
+            child: const Text('Reqbot Chat'),
           ),
         ],
       ),

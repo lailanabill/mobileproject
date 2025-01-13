@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:reqbot/controllers/home_controller.dart';
 import 'package:reqbot/models/project_model.dart';
+import 'package:reqbot/services/gemini_service.dart';
 import '../widgets/home_header.dart';
 import '../widgets/home_action_buttons.dart';
 import '../widgets/animated_project_card.dart';
 import '../screens/projectDetailsScreen.dart';
 import '../screens/record.dart';
 import 'package:reqbot/services/auth/auth_services.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<ProjectModel> _projects = [];
   ProjectModel? _lastRemovedProject;
   int? _lastRemovedProjectIndex;
+ 
 
   @override
   void initState() {
@@ -161,6 +164,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.pushNamed(context, '/FavoritesScreen'),
                     onGoToMailPage: () =>
                         Navigator.pushNamed(context, '/MailPage'),
+                    onGoToChatPage: () =>
+                        Navigator.pushNamed(
+                         context,
+                           '/ChatScreen',
+                           arguments: GeminiService,
+                        ),
+
                   ),
                 ],
               ),
