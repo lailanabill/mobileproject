@@ -10,7 +10,7 @@ class HomeActionButtons extends StatelessWidget {
     super.key,
     required this.onNewProject,
     required this.onViewFavorites,
-    required this.onGoToMailPage, 
+    required this.onGoToMailPage,
     required this.onGoToChatPage,
   });
 
@@ -47,9 +47,6 @@ class HomeActionButtons extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: onGoToMailPage,
-            child: const Text('Go to Mail Page'),
-          ),ElevatedButton(
             onPressed: onGoToChatPage,
             child: const Text('Reqbot Chat'),
           ),

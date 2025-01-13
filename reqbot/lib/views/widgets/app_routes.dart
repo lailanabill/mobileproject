@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:reqbot/views/screens/ChatScreen.dart';
-import '/views/screens/mail_page.dart';
 import '/views/screens/record.dart';
 import '/views/screens/sign_in_page.dart';
 import '/views/screens/sign_up_page.dart';
 import '/views/screens/welcome_page.dart';
 import '/views/screens/home_screen.dart';
-import '/views/screens/favorites_screen.dart'; 
-import '/services/gemini_service.dart'; 
+import '/views/screens/favorites_screen.dart';
+import '/services/gemini_service.dart';
 
 class AppRoutes {
   static Map<String, WidgetBuilder> getRoutes(GeminiService geminiService) {
@@ -18,8 +17,8 @@ class AppRoutes {
       '/HomeScreen': (context) => HomeScreen(),
       '/record': (context) => Record(),
       '/FavoritesScreen': (context) => FavoritesScreen(),
-      '/MailPage': (context) => const MailPage(),
-      '/ChatScreen': (context) => ChatScreen(geminiService: geminiService), // Pass GeminiService
+      '/ChatScreen': (context) =>
+          ChatScreen(geminiService: geminiService), // Pass GeminiService
     };
   }
 }

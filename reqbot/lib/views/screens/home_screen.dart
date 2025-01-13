@@ -9,7 +9,6 @@ import '../screens/projectDetailsScreen.dart';
 import '../screens/record.dart';
 import 'package:reqbot/services/auth/auth_services.dart';
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -23,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<ProjectModel> _projects = [];
   ProjectModel? _lastRemovedProject;
   int? _lastRemovedProjectIndex;
- 
 
   @override
   void initState() {
@@ -164,13 +162,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.pushNamed(context, '/FavoritesScreen'),
                     onGoToMailPage: () =>
                         Navigator.pushNamed(context, '/MailPage'),
-                    onGoToChatPage: () =>
-                        Navigator.pushNamed(
-                         context,
-                           '/ChatScreen',
-                           arguments: GeminiService,
-                        ),
-
+                    onGoToChatPage: () => Navigator.pushNamed(
+                      context,
+                      '/ChatScreen',
+                      arguments: GeminiService,
+                    ),
                   ),
                 ],
               ),
