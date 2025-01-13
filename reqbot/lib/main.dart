@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'views/themes/light_theme.dart';
-import 'views/themes/dark_theme.dart';
-import 'views/widgets/app_routes.dart';
-import 'views/widgets/app_initialization.dart';
-import 'services/providers/favorites_provider.dart';
+import '/services/gemini_service.dart';
+import '/views/themes/light_theme.dart';
+import '/views/themes/dark_theme.dart';
+import '/views/widgets/app_initialization.dart';
+import '/services/providers/favorites_provider.dart';
+import '/views/widgets/app_routes.dart';
 
 void main() async {
   await initializeApp(); // Initialization logic moved to a helper
@@ -25,14 +27,16 @@ class ReqBotApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+    final geminiService = GeminiService(apiKey: apiKey);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'ReqBot',
-      theme: buildLightTheme(), // Moved light theme logic to a separate file
-      darkTheme: buildDarkTheme(), // Moved dark theme logic to a separate file
+      theme: buildLightTheme(),
+      darkTheme: buildDarkTheme(),
       themeMode: ThemeMode.system,
       initialRoute: '/',
-      routes: AppRoutes.routes, // Moved route logic to a separate file
+      routes: AppRoutes.getRoutes(geminiService), // Pass geminiService to routes
     );
   }
 }

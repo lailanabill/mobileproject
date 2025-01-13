@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reqbot/controllers/home_controller.dart';
 import 'package:reqbot/models/project_model.dart';
+import 'package:reqbot/services/gemini_service.dart';
 import '../widgets/home_header.dart';
 import '../widgets/home_action_buttons.dart';
 import '../widgets/animated_project_card.dart';
@@ -159,8 +160,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         _loadProjects()), // Reload projects after creating a new one
                     onViewFavorites: () =>
                         Navigator.pushNamed(context, '/FavoritesScreen'),
-                    onGoToMailPage: () =>
-                        Navigator.pushNamed(context, '/MailPage'),
+                    onGoToChatPage: () => Navigator.pushNamed(
+                      context,
+                      '/ChatScreen',
+                      arguments: GeminiService,
+                    ),
                   ),
                 ],
               ),

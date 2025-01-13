@@ -13,7 +13,7 @@ class ProjectModel {
     return ProjectModel(
       id: map['id'],
       name: map['name'],
-      transcription: map['transcription'],
+      transcription: map['transcription'] ?? '', // Default to empty string
     );
   }
 
