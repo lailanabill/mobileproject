@@ -3,6 +3,7 @@ import 'package:reqbot/controllers/record_controller.dart';
 import '../widgets/project_name_input_field.dart';
 import '../widgets/transcription_display.dart';
 import 'home_screen.dart';
+import 'structured_requirements.dart'; // Import the screen for displaying requirements
 
 class Record extends StatefulWidget {
   const Record({super.key});
@@ -57,6 +58,25 @@ class _RecordState extends State<Record> {
     }
   }
 
+  Future<void> _handleExtractRequirements() async {
+    try {
+      // Fetch requirements from the controller
+      final requirements = await _controller.fetchRequirements(_transcription);
+
+      // Navigate to the Structured Requirements screen with the fetched requirements
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StructuredRequirementsScreen(requirements: requirements),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +104,12 @@ class _RecordState extends State<Record> {
                 onPressed: _handleSaveProject,
                 child: const Text('Save Project'),
               ),
+              const SizedBox(height: 16), // Add extra spacing
+              if (_transcription.isNotEmpty) // Show Extract Requirements button if transcription is not empty
+                ElevatedButton(
+                  onPressed: _handleExtractRequirements,
+                  child: const Text('Extract Requirements'),
+                ),
             ],
           ),
         ),

@@ -94,32 +94,39 @@ class _UploadConvertScreenState extends State<UploadConvertScreen> {
                   : UploadedFilesList(uploadedFiles: uploadedFiles),
             ),
             const SizedBox(height: 16),
-            if (errorMessage.isNotEmpty) ErrorMessage(errorMessage: errorMessage),
+            if (errorMessage.isNotEmpty)
+              ErrorMessage(errorMessage: errorMessage),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent),
                   child: const Text('Back'),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     if (uploadedFiles.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please upload at least one file.')),
+                        const SnackBar(
+                            content: Text('Please upload at least one file.')),
                       );
                     } else {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const StructuredRequirementsScreen(),
+                          builder: (context) => StructuredRequirementsScreen(
+                            requirements:
+                                uploadedFiles, // Replace with processed file contents if needed
+                          ),
                         ),
                       );
                     }
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent),
                   child: const Text('Next'),
                 ),
               ],

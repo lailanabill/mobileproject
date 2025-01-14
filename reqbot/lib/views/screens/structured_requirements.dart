@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class StructuredRequirementsScreen extends StatelessWidget {
-  const StructuredRequirementsScreen({super.key});
+  final List<String> requirements;
+
+  // Accepting dynamic requirements as input
+  const StructuredRequirementsScreen({super.key, required this.requirements});
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +60,18 @@ class StructuredRequirementsScreen extends StatelessWidget {
                   children: [
                     Text(
                       "Structured Requirements",
-                      style: TextStyle(color: Colors.black87, fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 8),
                     Text(
-                      "Pending Tasks",
-                      style: TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold),
+                      "Requirements List",
+                      style: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -71,15 +80,7 @@ class StructuredRequirementsScreen extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              _buildTaskItem(context, iconColor: Colors.blue, title: "Use Case", status: "Pending", statusColor: Colors.red),
-              _buildTaskItem(context, iconColor: Colors.pink, title: "SRS", status: "Completed", statusColor: Colors.green),
-              _buildTaskItem(context, iconColor: Colors.green, title: "UML", status: "Pending", statusColor: Colors.red),
-              _buildTaskItem(context, iconColor: Colors.orange, title: "Requirements", status: "Completed", statusColor: Colors.green),
-            ],
-          ),
+          child: _buildRequirementsList(context),
         ),
       ],
     );
@@ -112,12 +113,18 @@ class StructuredRequirementsScreen extends StatelessWidget {
                   children: [
                     Text(
                       "Structured Requirements",
-                      style: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 8),
                     Text(
-                      "Pending Tasks",
-                      style: TextStyle(color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold),
+                      "Requirements List",
+                      style: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -126,21 +133,42 @@ class StructuredRequirementsScreen extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            children: [
-              _buildTaskItem(context, iconColor: Colors.blue, title: "Use Case", status: "Pending", statusColor: Colors.red),
-              _buildTaskItem(context, iconColor: Colors.pink, title: "SRS", status: "Completed", statusColor: Colors.green),
-              _buildTaskItem(context, iconColor: Colors.green, title: "UML", status: "Pending", statusColor: Colors.red),
-              _buildTaskItem(context, iconColor: Colors.orange, title: "Requirements", status: "Completed", statusColor: Colors.green),
-            ],
-          ),
+          child: _buildRequirementsList(context),
         ),
       ],
     );
   }
 
-  Widget _buildTaskItem(BuildContext context, {required Color iconColor, required String title, required String status, required Color statusColor}) {
+  // Build the requirements list dynamically
+  Widget _buildRequirementsList(BuildContext context) {
+    return requirements.isEmpty
+        ? Center(
+            child: Text(
+              "No requirements available.",
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+            ),
+          )
+        : ListView.builder(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            itemCount: requirements.length,
+            itemBuilder: (context, index) {
+              return _buildTaskItem(
+                context,
+                iconColor: Colors.blue,
+                title: requirements[index],
+                status: "Pending", // Default status for each requirement
+                statusColor: Colors.red, // Default color for pending status
+              );
+            },
+          );
+  }
+
+  Widget _buildTaskItem(BuildContext context,
+      {required Color iconColor,
+      required String title,
+      required String status,
+      required Color statusColor}) {
     return Container(
       margin: EdgeInsets.only(bottom: 16),
       padding: EdgeInsets.all(16),
@@ -170,12 +198,16 @@ class StructuredRequirementsScreen extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87),
             ),
           ),
           Text(
             status,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: statusColor),
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: statusColor),
           ),
         ],
       ),

@@ -1,11 +1,16 @@
 import 'package:permission_handler/permission_handler.dart';
 import 'package:reqbot/database/database_helper.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class RecordController {
   final stt.SpeechToText _speech = stt.SpeechToText();
   bool isListening = false;
   String transcription = '';
+
+  // API URL for extracting requirements
+  final String apiUrl = 'http://192.168.1.2:5000/extract';
 
   Future<void> startListening(Function(String) onTranscriptionUpdated) async {
     try {
@@ -52,6 +57,29 @@ class RecordController {
       await DBHelper.instance.insertProject(projectName, transcription);
     } catch (e) {
       throw Exception('Error saving project: $e');
+    }
+  }
+
+  // New method to send transcription to Flask API and fetch requirements
+  Future<List<String>> fetchRequirements(String transcription) async {
+    if (transcription.isEmpty) {
+      throw Exception('Transcription is empty. Please record audio first.');
+    }
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"transcription": transcription}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<String>.from(data['requirements']);
+      } else {
+        throw Exception('Failed to fetch requirements: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Error connecting to API: $e');
     }
   }
 }
