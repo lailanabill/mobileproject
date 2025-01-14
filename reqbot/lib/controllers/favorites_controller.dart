@@ -1,5 +1,6 @@
 import 'package:reqbot/services/providers/favorites_provider.dart';
 
+//Provides an interface between the UI and the FavoritesProvider
 class FavoritesController {
   final FavoritesProvider _favoritesProvider;
 

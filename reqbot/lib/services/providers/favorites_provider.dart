@@ -6,6 +6,7 @@ class FavoritesProvider extends ChangeNotifier {
   Set<String> get favoriteProjects => _favoriteProjects;
 
   void toggleFavorite(String projectName) {
+    //add or remove via toggle and notifies listeners using notifyListeners()
     if (_favoriteProjects.contains(projectName)) {
       _favoriteProjects.remove(projectName);
     } else {
