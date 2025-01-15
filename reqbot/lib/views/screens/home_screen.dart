@@ -7,6 +7,7 @@ import '../widgets/home_action_buttons.dart';
 import '../widgets/animated_project_card.dart';
 import '../screens/projectDetailsScreen.dart';
 import '../screens/record.dart';
+import '../screens/structured_requirements.dart'; // Added import for requirements screen
 import 'package:reqbot/services/auth/auth_services.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -90,6 +91,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _navigateToRequirements(String transcription) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StructuredRequirementsScreen(
+          requirements: transcription.split('\n'), // Example logic
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,6 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             final project = projects[index];
                             return AnimatedProjectCard(
                               projectName: project.name,
+                              transcription: project.transcription,
                               onRemove: () => _removeProject(index),
                               onTap: () => Navigator.push(
                                 context,
@@ -164,6 +177,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
+                              fetchRequirements: (transcription) async {
+                                return await _controller.fetchRequirements(
+                                    transcription); // Fetch from API
+                              },
                             );
                           },
                         );

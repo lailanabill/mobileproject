@@ -82,4 +82,30 @@ class RecordController {
       throw Exception('Error connecting to API: $e');
     }
   }
+
+  // New method to check permissions and initialize speech-to-text
+  Future<void> initializeSpeechRecognition() async {
+    try {
+      final status = await Permission.microphone.request();
+      if (status.isGranted) {
+        bool available = await _speech.initialize(
+          onStatus: (status) => print('Speech status: $status'),
+          onError: (error) => print('Speech error: $error'),
+        );
+        if (!available) {
+          throw Exception('Speech recognition is not available.');
+        }
+      } else {
+        throw Exception(
+            'Microphone permission is required to use speech-to-text features.');
+      }
+    } catch (e) {
+      throw Exception('Failed to initialize speech recognition: $e');
+    }
+  }
+
+  // New method to clear transcription
+  void clearTranscription() {
+    transcription = '';
+  }
 }
