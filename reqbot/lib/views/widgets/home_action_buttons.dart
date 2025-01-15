@@ -17,61 +17,77 @@ class HomeActionButtons extends StatelessWidget {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ElevatedButton(
+          _buildActionButton(
+            label: 'New Project',
+            icon: Icons.create_new_folder_outlined,
             onPressed: onNewProject,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-              textStyle: const TextStyle(
-                fontSize: 20,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            child: const Text(
-              'New Project',
-              style: TextStyle(color: Color(0xFF3F51B5)),
-            ),
           ),
-          const SizedBox(height: 16),
-          ElevatedButton(
+          const SizedBox(height: 12), // Reduced gap
+          _buildActionButton(
+            label: 'View Favorites',
+            icon: Icons.favorite_border,
             onPressed: onViewFavorites,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-              textStyle: const TextStyle(
-                fontSize: 20,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            child: const Text(
-              'View Favorites',
-              style: TextStyle(color: Color(0xFF3F51B5)),
-            ),
           ),
-          const SizedBox(height: 16),
-          ElevatedButton(
+          const SizedBox(height: 12), // Reduced gap
+          _buildActionButton(
+            label: 'Reqbot Chat',
+            icon: Icons.chat_bubble_outline,
             onPressed: onGoToChatPage,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-              textStyle: const TextStyle(
-                fontSize: 20,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            child: const Text(
-              'Reqbot Chat',
-              style: TextStyle(color: Color(0xFF3F51B5)),
-            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required String label,
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        elevation: 8,
+        shadowColor: Colors.black.withOpacity(0.2),
+        backgroundColor: Colors.transparent,
+      ),
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF3F51B5), Color(0xFF7986CB)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        child: Container(
+          alignment: Alignment.center,
+          constraints: const BoxConstraints(
+            minWidth: 200,
+            minHeight: 50, // Slightly reduced height
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 20, color: Colors.white),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
