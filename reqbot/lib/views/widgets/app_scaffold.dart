@@ -58,13 +58,6 @@ class AppScaffold extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.mail),
-            title: const Text('Mail'),
-            onTap: () {
-              Navigator.pushNamed(context, '/MailPage');
-            },
-          ),
-          ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Sign Out'),
             onTap: () {

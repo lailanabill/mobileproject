@@ -2,7 +2,7 @@ class ProjectModel {
   final int id;
   final String name;
   final String transcription;
-
+//represent structured data where keys correspond to property names, and values hold the associated data.
   ProjectModel({
     required this.id,
     required this.name,
