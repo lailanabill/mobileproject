@@ -40,7 +40,7 @@ class HomeController {
   // Returns:
   // - A list of requirements (List<String>) extracted from the transcription.
   Future<List<String>> fetchRequirements(String transcription) async {
-    const String apiUrl = 'http://192.168.1.2:5000/extract'; // Replace with your API URL
+    const String apiUrl = 'http://172.20.10.6:5000/extract'; // Replace with your API URL
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
